@@ -1,0 +1,48 @@
+##########################
+# MKRX unix network kernel
+##########################
+Create an unix network node 
+All access anonymous & encrypted via a one-time-only key on usb
+A user stores encrypted keys on a usb
+Any node authorizes user via access keys from usb
+All access keys are used once
+   keys can not be replayed from a snoop network
+Each node on a network has reputation which increase the value of node's access keys
+Users trade access keys via usb & encrypted transfers
+Monetezation of access keys are inherint
+##########################
+Each node able to(encrypted):
+  chat
+  send files 
+  access terminal
+  bounce/tunnel/proxy traffic
+  efficent mass file store
+  encrypt file store
+  network file share
+  website
+  raw text paste-bin
+  program C perl & csh
+  farm access keys 
+##########################
+READ THE MANUAL BELOW 
+github.com/skrp/MKRX/MAN
+
+Find an unused usb larger than 1GB
+download offical operating system below
+http://ftp-archive.freebsd.org/pub/FreeBSD-Archive/old-releases/ISO-IMAGES/10.4/FreeBSD-10.4-RELEASE-amd64-memstick.img
+
+Learn how to put that file onto the usb
+  on unix systems use the command below
+  Find device number of usb to place in of=/dev/ (example of=/dev/da0)
+  dd if=FreeBSD-10.4-RELEASE-amd64-memstick.img of=/dev/  conv=syn bs=1M
+
+Find a machine
+##########################
+OFFLINE install will not work as is.
+SRC/distfiles folder is missing with tarballs of programs
+##########################
+skrp 
+hacker of the village 
+Hidden in the  1337
+Meri Kann cibR punX
+##########################

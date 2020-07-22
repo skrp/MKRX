@@ -1,0 +1,120 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+use Digest::SHA;
+##########################
+# BRICK - sys config verif 
+##########################
+my (%ohost, %host);
+my (@host, @ohost, @target, @FILE);
+
+@target = qw(/etc/ /bin/ /sbin/ /boot/ /lib/ /libexec/ /sys/ /usr/lib/ /usr/local/ /usr/bin/ /usr/include /usr/lib/ /usr/libdata/ /usr/libexec/ /usr/sbin/ /usr/share/ /usr/src/ /usr/ANONI/etc/ /usr/ANONI/bin/ /usr/ANONI/sbin/ /usr/ANONI/boot/ /usr/ANONI/lib/ /usr/ANONI/libexec/ /usr/ANONI/sys/ /usr/ANONI/etc/ /usr/ANONI/usr/lib/ /usr/ANONI/usr/local);
+
+my $o_host = '/etc/VLIST'; 
+unless (-e $o_host)
+{
+	out_VLIST();
+	print "NEW /etc/VLIST\n";
+	exit;
+}
+# OLD ####################
+#out_VLIST();
+@ohost = slurp($o_host);
+for (@ohost)
+{
+	my @i = split(" ", $_);
+	$ohost{$i[1]} = $i[0];
+}
+gen_VLIST();
+chk();
+# NEW ####################
+sub out_VLIST
+{
+	gen_VLIST();
+	open(my $vfh, '>', $o_host); 
+	print $vfh "$host{$_} $_\n" for (keys %host);
+	close $vfh;
+}
+sub gen_VLIST
+{
+	dir_walk($_, \&print_file) for (@target);
+	chomp @FILE;
+##########################
+	for (@FILE)
+	{
+		my $sha = f_digest($_);
+		$host{$_} = $sha;
+	}
+}
+##########################
+sub chk
+{
+	for (keys %ohost)
+	{
+		print "FAIL file missing $_ $host{$_}\n" unless (defined $host{$_});
+		print "FAIL file changed $_ $host{$_}\n" unless ($ohost{$_} = $host{$_});	
+	}
+}
+##########################
+sub f_digest 
+{
+    my ($filename) = @_;
+    my $digest = Digest::SHA->new(256);
+    $digest->addfile($filename, "b");
+    return $digest->hexdigest();
+}
+sub slurp 
+{
+	my ($file) = @_;
+	my $subfh; 
+	my @slurp;
+
+	open($subfh, '<', $file) or die "FAIL bad $file $!\n";
+	@slurp = readline $subfh;
+	close $subfh; chomp @slurp;
+
+	return @slurp;
+}
+sub uniq
+{
+	my ($ref1, $ref2) = @_;
+	my %master;
+	my (@set, @one, @two);
+	@one = @{$ref1};
+	@two = @{$ref2};
+
+	%master = map{$_ => undef} @one;
+
+	for (@two)
+	{
+		next if (exists $master{$_});
+		push(@set,$_);
+	}
+	return @set;
+}
+sub dir_walk
+{ #dir_walk($DIR, \&print_file);
+	my ($DIR, $code) = @_;
+	my $dir;
+	$DIR =~ s%/\z%%;
+
+	$code->($DIR);
+
+	if (-d $DIR)
+	{
+		my $file;
+		unless(opendir $dir, $DIR)
+		{
+			warn "FAIL open dir $DIR: $!\n";
+			return;
+		}
+		while ($file = readdir $dir)
+		{
+			next if $file eq '.' || $file eq '..';
+			dir_walk("$DIR/$file", $code);
+		}
+	}
+}
+sub print_file
+{
+	push @FILE, $_[0] if -f $_[0];
+}

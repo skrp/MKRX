@@ -1,0 +1,26 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+use File::Copy;
+##########################
+# CP - copy files in lists
+##########################
+my ($list, $dir, $dump) = @ARGV;
+die "ARG1 LIST ARG2 DIR ARG3 DUMP" unless (defined $dump);
+$dir =~ s%/\z%%;
+$dump =~ s%/\z%%;
+##########################
+open(my $lfh, '<', $list);
+my @list = <$lfh>;
+chomp @list; close $lfh;
+##########################
+for (@list)
+{ 
+	my $line = $_;
+	my $f = "$dir/$line"; 
+	my $df = "$dump/$line"; 
+##########################
+	copy($f, $dump) or print "FAIL $f $!\n"; 
+}
+##########################
+unlink $list;
+##########################

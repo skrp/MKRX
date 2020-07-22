@@ -1,0 +1,30 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+use Term::ANSIColor;
+my ($f) = @ARGV;
+my @i = slurp($f);
+shift @i;shift @i;
+my $x = 0;
+my $lim = @i;
+while ($x < $lim)
+{
+	print colored(['green on_black'],"$i[$x]\n"); $x++;
+	print colored(['yellow on_black'],"$i[$x]\n"); $x++;
+	print colored(['green on_black'],"$i[$x]\n"); $x++;
+	print colored(['yellow on_black'],"$i[$x]\n"); $x++;
+	print colored(['green on_black'],"$i[$x]\n"); $x++;
+	print colored(['yellow on_black'],"$i[$x]\n"); $x++;
+	sleep 1;
+}
+sub slurp 
+{
+	my ($file) = @_;
+	my $subfh; 
+	my @slurp;
+
+	open($subfh, '<', $file) or die "FAIL slurp $file : $!\n";
+	@slurp = readline $subfh;
+	close $subfh; chomp @slurp;
+
+	return @slurp;
+}

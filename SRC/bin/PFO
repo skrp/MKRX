@@ -1,0 +1,29 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+use Term::ANSIColor;
+#########################
+# tcpdump
+#########################
+my @f = `tcpdump -netttr /var/log/pflog`;
+chomp @f;
+for (@f)
+{
+	my @i = split(" ", $_);
+	#print colored(['white on_red']," $i[0]");
+	#print colored(['red on_black']," $i[1]");
+	print colored(['red on_white']," $i[2]");
+	print colored(['red on_black']," $i[3]");
+	print colored(['red on_black']," $i[4]");
+	#print colored(['red on_black']," $i[5]");
+ #	print colored(['red on_white']," $i[6]");
+	print colored(['black on_red']," $i[7]");
+	print colored(['red on_black'],"     ");
+	#print colored(['red on_white']," $i[8]");
+	print colored(['cyan on_blue']," $i[9]");
+	print "\n";
+}
+#########################
+#########################
+#########################
+#########################
+#########################

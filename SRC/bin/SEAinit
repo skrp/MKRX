@@ -1,0 +1,20 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+#####################################
+# SEAinit - create nested directories
+#####################################
+my ($target) = @ARGV;
+die "ARG1 dir" unless (defined $target);
+$target =~ s%/\z%%;
+#####################################
+my @one = qw(a b c d e f 1 2 3 4 5 6 7 8 9 0);
+my @two = qw(a b c d e f 1 2 3 4 5 6 7 8 9 0);
+#####################################
+for (@one)
+{
+	my $i = $target.'/'.$_;
+	mkdir "$i$_" for (@two);
+#####################################
+#	print "mkdir $i$_\n" for (@two);
+}
+#####################################

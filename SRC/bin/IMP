@@ -1,0 +1,3 @@
+#!/bin/csh
+
+zpool import -f -o altroot=/tmp $1;

@@ -1,0 +1,36 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+######################
+# key-mgmt
+######################
+my ($bank_dir) = @ARGV;
+my %G;
+my @set;
+die "ARG1 bank dir\n" unless (defined $bank_dir);
+my $dir = $bank_dir;
+$dir =~ s%/\z%%;
+$dir = $dir.'/g/';
+die "FAIL bank dir\n" unless (-d $dir);
+
+opendir(my $dh, $dir);
+my $cnt = 0;
+while (readdir $dh)
+{
+	chomp $_;
+	next if ($_ eq '.' || $_ eq '..' || $_ =~ m/p/);
+
+
+	my $f = $dir.$_;
+	open(my $ifh, '<', $f);
+
+	my $hn = <$ifh>; chomp $hn;
+	my $grp = <$ifh>; chomp $grp;
+	my $usr = <$ifh>; chomp $usr;
+	
+	my $shr = substr($_,0,6);
+	$G{$grp} .= "$hn-$grp-$usr $shr\n";
+}
+######################
+#print "\n$_ $G{$_}\n" for (keys %G);
+print "$G{$_}" for (keys %G);
+

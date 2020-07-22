@@ -1,0 +1,164 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+use File::Copy;
+use Digest::SHA;
+################################
+# LOG - get vital system stats
+################################
+# mpsutil show all
+# mpsutil show iocfacts 
+# KRIP #########################
+my $file ="tmp";
+open(my $fh,'>>',$file);
+my @p = qw(0 . 1 2 3 4 5 6 + 7 8 9 / * - q w e r a s d f z x c v);
+my @pp = neopass();
+my $hn = `hostname`; chomp $hn;
+################################
+cpu();
+mem();
+zfs();
+net();
+usr();
+################################
+ekrip($file);
+my $isha = f_digest('ktmp');
+`echo "$isha" >> key`;
+`echo "$pp[0]" >> key`;
+move('ktmp',"/usr/ANONI/nfs/$hn/pool/$isha");
+move('key',"/usr/ANONI/nfs/$hn/g/k$isha");
+unlink($file);
+print "$isha\n";
+# FN ###########################
+sub cpu
+{
+	my @res;
+	my @l = ('top','ps -axj','dmesg', 'iostat',
+		'sysctl hw.model','pciconf -l -cv',
+		'uname -a','service -e',);
+	for (@l)
+	{
+		my $i = $_;
+		push(@res,"\n######### $i\n#########\n");
+		push(@res,$_) for `$i`;
+		push(@res,'');
+	}
+	print $fh "$_" for (@res);
+}
+sub mem
+{
+	my @res;
+	my @l = ('sysctl hw.physmem','vmstat');
+	for (@l)
+	{
+		my $i = $_;
+		push(@res,"\n######### $i\n#########\n");
+		push(@res,$_) for `$i`;
+		push(@res,'');
+
+	}
+	print $fh "$_" for (@res);
+}
+sub zfs
+{
+	my @res;
+	my @l = ('camcontrol devlist','zfs list','zpool iostat -v',
+		'zpool list','zpool status','zpool status -xv',
+		'df','zfs list -t snapshot','iostat -d', 'gstat');
+	for (@l)
+	{
+		my $i = $_;
+		push(@res,"\n######### $i\n#########\n");
+		push(@res,$_) for `$i`;
+		push(@res,'');
+	}
+	print $fh "$_" for (@res);
+}
+sub net
+{
+	my @res;
+	my @l = ('netstat -r4n','netstat -a4','ifconfig',
+		'service pf status','nfsstat','showmount -e',
+		'tcpdump -r /var/log/pflog',
+		'sysctl kern.ipc.numopensockets','sockstat -4','arp -a');
+	for (@l)
+	{
+		my $i = $_;
+		push(@res,"\n######### $i\n#########\n");
+		push(@res,$_) for `$i`;
+		push(@res,'');
+	}
+
+	print $fh "$_" for (@res);
+}
+sub usr
+{
+	my @res;
+	my @l = ('w','finger');
+	for (@l)
+	{
+		my $i = $_;
+		push(@res,"\n######### $i\n#########\n");
+		push(@res,$_) for `$i`;
+		push(@res,'');
+	}
+
+
+	print "$_" for (@res);
+	my @f = ('/var/log/auth.log','/var/log/messages',
+		'/var/log/mount.today','/var/log/setuid.today',
+		'/var/log/security');
+	for (@f)
+	{
+		my $i = $_;
+		print $fh "$_\n" for slurp($i);
+	}
+}
+sub slurp 
+{
+	my ($file) = @_;
+	my $subfh; 
+	my @slurp;
+
+	open($subfh, '<', $file) or print "FAIL slurp $file : $!\n";
+	@slurp = readline $subfh;
+	close $subfh; chomp @slurp;
+
+	return @slurp;
+}
+sub ekrip
+{
+	my ($file) = @_;
+	`openssl des3 -in tmp -out ktmp -k $pp[0]`;
+
+}
+sub neopass
+{
+	my @pass;
+
+	my $cnt2 = 0;
+	my $p_count = @p; $p_count--;
+
+	while ($cnt2 < 4)
+	{
+		my @set = `jot -r 5 0 $p_count`;
+		chomp @set;
+		for (@set)
+		{
+			no warnings 'uninitialized';	
+			$pass[0] .= $p[$_];
+			$pass[1] .= $p[$_];
+		}
+		$cnt2++;
+		$pass[1] .= ' ';
+	}
+############################
+	chop $pass[1];
+	return @pass;
+}
+sub f_digest 
+{
+    my ($filename) = @_;
+    my $digest = Digest::SHA->new(256);
+    $digest->addfile($filename, "b");
+    return $digest->hexdigest();
+}

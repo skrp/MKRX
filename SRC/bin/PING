@@ -1,0 +1,9 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+
+my ($addr) = @ARGV;
+
+my @r = `ping -c 1 $addr`;
+chomp @r;
+
+print "$r[1]\n$r[5]\n";

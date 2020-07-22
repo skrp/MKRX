@@ -1,0 +1,71 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+use File::Copy;
+##########################
+# VOLLEY - load spec-usr & send spec-grp
+my ($usr, $ip, $src, $tnode, $tgrp, $cnt) = @ARGV;
+die 'ARG $usr, $ip, $tnode, $tgrp, $cnt' unless defined ($cnt);
+key_volley($usr, $ip, $src, $tnode, $tgrp, $cnt);
+sub key_volley
+{
+	
+	my ($usr, $ip, $src, $tnode, $tgrp, $cnt) = @_;
+##########################
+	my (@dir);
+	my ($dh);
+	$src =~ s%/\z%%;
+	my $gbank = $src.'/BANK/g/'; 
+	my $pool = $src.'/BANK/pool/';
+##########################
+	$src =~ s%/\z%%;
+	my $h = `echo ~`;
+	chomp $h;
+##########################
+	my $ho = `hostname`;
+	chomp $ho;
+	my $n = name();
+	my $stampname = $n.'.tar';
+##########################
+	chdir $h or die "FAIL cd home\n";
+	mkdir $stampname;
+	opendir($dh, $gbank);
+##########################
+	while (readdir $dh)
+	{
+		next if ($_ eq '.' || $_ eq '..');
+		my @meta;
+		my ($i, $ifh);
+##########################
+		$i = $gbank.$_;
+		my $iii = $_; $iii =~ s/^.//;
+		my $ii = $pool.$iii;
+##########################
+		open($ifh, '<', $i) or die "FAIL $i $!\n";
+		@meta = readline $ifh;
+		chomp @meta;
+##########################
+		next unless ($meta[0] eq $tnode);
+		next unless ($meta[1] eq $tgrp);
+##########################
+		move($i,"$stampname/") or die "FAIL mv $i $!\n";
+		move($ii,"$stampname/") or die "FAIL mv $ii $!\n";
+##########################
+		$cnt--;
+		last if ($cnt == 0);
+	}
+##########################
+	`chmod -R 700 $stampname`;
+	chdir $stampname;
+	`tar -cf $stampname *`;
+##########################
+	my $res = `scp $stampname $usr\@$ip:~`;
+	print "$res\n";
+	chdir $h;
+	`rm -r $stampname`;
+}
+sub name
+{
+	my $id = int(rand(999));
+	my $name = $$.'_'.$id;
+	return $name;
+}

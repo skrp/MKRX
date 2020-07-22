@@ -1,0 +1,58 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+use File::Copy;
+##########################
+# GRAB - search BANK for node/grp
+# move a number of group $KEY
+my ($src, $dst, $node, $grp, $cnt) = @ARGV;
+die "ARG1 src ARG2 dst ARG3 node ARG4 grp ARG5 count\nuse full path\n" unless (defined $cnt);
+##########################
+my (@dir);
+my %host;
+my ($dh);
+my ($gbank, $pool, $ig, $if);
+##########################
+$src =~ s%/\z%%;
+$dst =~ s%/\z%%;
+$cnt = 0 unless defined $cnt;
+##########################
+$gbank = $src.'/BANK/g/';
+$pool = $src.'/BANK/pool/';
+$ig = $dst.'/BANK/g/';
+$if = $dst.'/BANK/pool/';
+##########################
+print "src: $pool $gbank\n";
+print "dst: $if $ig\n";
+##########################
+opendir($dh, $gbank) or die "FAIL gbank\n";
+##########################
+while (readdir $dh)
+{
+	next if ($_ eq '.' || $_ eq '..');
+	my @meta;
+	my ($i, $ifh);
+##########################
+	$i = $gbank.$_;
+	my $mi = $ig.$_;
+	my $iii = $_; $iii =~ s/^.//;
+	my $ii = $pool.$iii;
+	my $fi = $if.$iii;
+##########################
+	open($ifh, '<', $i);
+	@meta = readline $ifh;
+	chomp @meta;
+##########################
+	$host{$meta[0]} = 1;
+	next unless ($meta[0] eq $node);
+	next unless ($meta[1] eq $grp);
+##########################
+	move($i,$mi) or die "FAIL mv $i $!\n";
+	move($ii,$fi) or die "FAIL mv $ii $!\n";
+	`chmod 700 $fi`;
+	print "$fi\n";
+##########################
+	$cnt--;
+	last if $cnt == 0;
+}
+#print "host: $_\n" for (keys %host);
+##########################

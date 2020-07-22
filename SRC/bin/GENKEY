@@ -1,0 +1,20 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+use File::Copy;
+use Digest::SHA;
+###########################
+# KEYUP - creat host usr
+###########################
+my ($usb, $node,$kdump, $mdump, $start, $end) = @ARGV;
+die "ARG1 /usb ARG2 node ARG4 kdump ARG5 metadump ARG6 start ARG7 end\n" unless (defined $end);
+$usb =~ s%/\z%%;
+# PASSBUTTON ##############
+my @p = qw(0 . 1 2 3 4 5 6 + 7 8 9 / * - q w e r a s d f z x c v);
+my @list = $start..$end;
+my $shell = '/bin/csh';
+############################
+my @grp = qw();
+############################
+cr_home($_) for (@list);
+cr_usr($_) for (@list);
+############################

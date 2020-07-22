@@ -1,0 +1,23 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+#################################
+# LONE - find files of low clones 
+#################################
+my ($file, $pool) = @ARGV;
+die "ARG1 file ARG2 pool" unless (defined $pool);
+#################################
+open(my $fh, '<', $file);
+my @lines = readline $fh;
+close $fh; chomp @lines;
+#################################
+for (@lines)
+{
+	my @array = split(" ", $_);
+	my $cnt = 0;
+
+#################################
+	$cnt++ for (@array);
+#################################
+	print "$array[0]\n" if (($cnt == 2) && ($array[1] eq $pool));
+}
+#################################

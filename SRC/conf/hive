@@ -1,0 +1,7 @@
+#!/bin/sh
+. /etc/rc.subr
+name="hive"
+rcvar=hive_enable
+command="/bin/ZOE"
+load_rc_config $name
+run_rc_command "$1"

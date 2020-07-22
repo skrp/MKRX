@@ -1,0 +1,108 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+use Digest::SHA;
+##########################
+# both - compare
+##########################
+my ($main, $diff) = @ARGV;
+die "ARG1 main ARG2 diff\n" unless (defined $diff);
+
+my (%main, %diff);
+my (@main, @diff, @target, @FILE);
+
+# OLD ####################
+@main = slurp($main);
+@diff = slurp($diff);
+for (@main)
+{
+	my @i = split(" ", $_);
+	$main{$i[1]} = $i[0];
+}
+for (@diff)
+{
+	my @i = split(" ", $_);
+	$diff{$i[1]} = $i[0];
+}
+# NEW ####################
+for (keys %main)
+{
+	unless (defined $diff{$_})
+	{
+		print "FAIL file missing in diff: $_\n";
+		next;
+	}
+	print "FAIL file changed $_\n" unless ($main{$_} eq $diff{$_});	
+}
+#for (keys %two)
+#{
+#	unless (defined $one{$_})
+#	{
+#		print "FAIL file missing in one: $_\n";
+#		next;
+#	}
+#	print "FAIL file changed $_\n" unless ($two{$_} eq $one{$_});	
+#}
+##########################
+sub f_digest 
+{
+    my ($filename) = @_;
+    my $digest = Digest::SHA->new(256);
+    $digest->addfile($filename, "b");
+    return $digest->hexdigest();
+}
+sub slurp 
+{
+	my ($file) = @_;
+	my $subfh; 
+	my @slurp;
+
+	open($subfh, '<', $file) or die "FAIL bad $file $!\n";
+	@slurp = readline $subfh;
+	close $subfh; chomp @slurp;
+
+	return @slurp;
+}
+sub uniq
+{
+	my ($ref1, $ref2) = @_;
+	my %master;
+	my (@set, @one, @two);
+	@one = @{$ref1};
+	@two = @{$ref2};
+
+	%master = map{$_ => undef} @one;
+
+	for (@two)
+	{
+		next if (exists $master{$_});
+		push(@set,$_);
+	}
+	return @set;
+}
+sub dir_walk
+{ #dir_walk($DIR, \&print_file);
+	my ($DIR, $code) = @_;
+	my $dir;
+	$DIR =~ s%/\z%%;
+
+	$code->($DIR);
+
+	if (-d $DIR)
+	{
+		my $file;
+		unless(opendir $dir, $DIR)
+		{
+			warn "FAIL open dir $DIR: $!\n";
+			return;
+		}
+		while ($file = readdir $dir)
+		{
+			next if $file eq '.' || $file eq '..';
+			dir_walk("$DIR/$file", $code);
+		}
+	}
+}
+sub print_file
+{
+	push @FILE, $_[0] if -f $_[0];
+}

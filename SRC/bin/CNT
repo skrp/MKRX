@@ -1,0 +1,15 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+##################################
+# CNT - count files in pool
+##################################
+my ($dir) = @ARGV;
+die "ARG1 DIR" unless (defined $dir);
+##################################
+my $cnt=0;
+opendir(my $dh, $dir) or die "FAIL $dir\n";
+##################################
+$cnt++ while (readdir $dh);
+##################################
+print "$cnt\n";
+##################################

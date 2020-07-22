@@ -1,0 +1,63 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+use File::Copy;
+##########################
+# LOAD - set spec-usr ready for use 
+# deposit id_rsa in .ssh/ & meta-key in home
+my ($node, $grp, $src) = @ARGV;
+die "ARG1 node ARG2 grp ARG3 src\nuse full path\n" unless (defined $grp);
+##########################
+my (@dir);
+my ($dh);
+my ($gbank, $pool, $home, $key);
+my %net;
+##########################
+$home = `echo ~`;
+chomp $home;
+$home .= '/';
+$key = $home.'.ssh/id_rsa';
+###########################
+if (defined $src) {
+{
+  $src =~ s%/\z%%;
+  $src .= '/';
+}
+} else { $src = $home; }
+##########################
+$gbank = $src.'BANK/g/';
+$pool = $src.'BANK/pool/';
+##########################
+print "src: $pool $gbank\n";
+print "who: $node $grp\n";
+#########################
+opendir($dh, $gbank) or die "FAIL gbank\n";
+##########################
+while (readdir $dh)
+{
+	my @meta;
+	my ($i, $ifh);
+##########################
+	next if ($_ eq '.' || $_ eq '..');
+##########################
+	$i = $gbank.$_;
+	my $mi = $home.$_;
+	my $iii = $_; $iii =~ s/^.//;
+	my $ii = $pool.$iii;
+##########################
+	open($ifh, '<', $i) or die "FAIL $i $!\n";
+	@meta = readline $ifh;
+	chomp @meta;
+##########################
+	$net{$meta[0]} = 0;
+	next unless ($meta[0] eq $node);
+	next unless ($meta[1] eq $grp);
+##########################
+	move($i,$mi) or die "FAIL mv $i $!\n";
+	move($ii,$key) or die "FAIL mv $ii $!\n";
+##########################
+	`chmod 700 ~/.ssh/id_rsa`;
+	print "load: $mi\n";
+	last;
+}
+##########################
+print "host: $_\n" for (keys %net);

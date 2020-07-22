@@ -1,0 +1,77 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+#########################
+# VERI - net witness list
+#########################
+# /BANK/REP a read only file
+# STEP 1#################
+my @yay; my @yay1;
+my $max = 10;
+my $time = TIME();
+#########################
+my $home = hcmd_rep($$);
+die "FAIL home $home\n" unless chdir $home;
+#########################
+my @net = slurp('/etc/hosts');
+sort @net;
+#########################
+my $hostname = `hostname`;
+chomp $hostname;
+
+my $hrep = 'REP.'.$hostname;
+my $id = $time.'_'.$hostname;
+#########################
+open(my $wfh, '>', $id);
+#########################
+while ($max != 0)
+{
+	$max--;
+	my $REP = slurp('REP');
+	last if ($REP > 1);
+	sleep 1000;
+}
+die "FAIL REP\n" unless ($REP > 1);
+#########################
+for (@net)
+{
+	my $i = $_;
+	my $orep = 'REP.'.$i;
+	my $place = $usr.'@'.$i;
+
+	unless (load_skey($i, 'rep') == 0)
+	{
+		print "FAIL inikey $i\n";
+		next;
+	}
+	# send host && take remote host
+	`scp $hrep $place:~/$hrep`;
+	`scp $place:/BANK/REP $orep`;
+
+	unless (-e $orep)
+	{
+		print "FAIL inikey1 $orep\n";
+		next;
+	}
+	push(@yay,$i);
+}
+#########################
+sort @yay;
+for (@yay)
+{
+	my $i = $_;
+	my $orep = 'REP.'.$i;
+	my $digest = slurp($orep);
+	print $wfh "$i $digest\n";
+
+}
+#########################
+close $wfh;
+my $ult = f_digest($id);
+my $msg = "$time $hostname $ult";
+#########################
+#sys_out($msg);
+#irc_out($msg);
+#http_out($msg);
+#########################
+#########################
+

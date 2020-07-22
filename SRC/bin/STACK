@@ -1,0 +1,100 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+use File::Copy;
+##########################
+# STACK - load spec-usr & send spec-grp
+my ($ip, $src, $dnode, $dgrp, $tnode, $tgrp, $cnt) = @ARGV;
+key_stack($ip, $src, $dnode, $dgrp, $tnode, $tgrp, $cnt);
+sub key_stack
+{
+	my ($ip, $src, $dnode, $dgrp, $tnode, $tgrp, $cnt) = @_;
+	die "ARG1 ip ARG2 src ARG3 dnode ARG4 dgrp ARG5 tnod ARG6 tgrp ARG7 cnt\nuse full path\n" unless (defined $cnt);
+##########################
+	my %net; my @dir; my $dh;
+	my ($gbank, $pool, $ig, $if, $usr);
+##########################
+	$src =~ s%/\z%%;
+	my $h = `echo ~`;
+	chomp $h;
+	$if = $h.'.ssh/id_rsa';
+	$ig = $h;
+
+	my $ho = `hostname`; chomp $ho;
+	my $stampname = $ho.$$.'.tar';
+##########################
+	$gbank = $src.'/BANK/g/';
+	$pool = $src.'/BANK/pool/';
+##########################
+	print "src: $pool $gbank\n";
+	print "who: $dnode $dgrp\n";
+#########################
+	opendir($dh, $gbank) or die "FAIL gbank\n";
+##########################
+	while (readdir $dh)
+	{
+		my @meta;
+		my ($i, $ifh);
+		next if ($_ eq '.' || $_ eq '..');
+##########################
+		$i = $gbank.$_;
+		my $mi = $ig.$_;
+		my $iii = $_; $iii =~ s/^.//;
+		my $ii = $pool.$iii;
+##########################
+		open($ifh, '<', $i) or die "FAIL $i $!\n";
+		@meta = readline $ifh;
+		chomp @meta;
+##########################
+		$net{$meta[0]} = 0;
+		next unless ($meta[0] eq $dnode);
+		next unless ($meta[1] eq $dgrp);
+##########################
+		move($i,$mi) or die "FAIL mv $i $!\n";
+		move($ii,$if) or die "FAIL mv $ii $!\n";
+		$usr = $meta[2];
+		`chmod 700 $if`;
+		print "load: $mi\n";
+		last;
+	}
+	close $dh;
+##########################
+#	print "host: $_\n" for (keys %net);
+##########################
+	chdir $h or die "FAIL cd home\n";
+	mkdir $stampname;
+##########################
+	opendir(my $idh, $gbank) or die "FAIL gbank\n";
+##########################
+	while (readdir $idh)
+	{
+		next if ($_ eq '.' || $_ eq '..');
+		my @meta;
+		my ($i, $ifh);
+##########################
+		$i = $gbank.$_;
+		my $iii = $_; $iii =~ s/^.//;
+		my $ii = $pool.$iii;
+##########################
+		open($ifh, '<', $i) or die "FAIL $i $!\n";
+		@meta = readline $ifh;
+		chomp @meta;
+##########################
+		next unless ($meta[0] eq $tnode);
+		next unless ($meta[1] eq $tgrp);
+##########################
+		move($i,"$stampname/") or die "FAIL mv $i $!\n";
+		move($ii,"$stampname/") or die "FAIL mv $ii $!\n";
+##########################
+		$cnt--;
+		last if ($cnt == 0);
+	}
+##########################
+	`chmod -R 700 $stampname`;
+	chdir $stampname or die "FAIL cd $stampname\n";
+	`tar -cf $stampname *`;
+##########################
+	my $res = `scp $stampname $usr\@$ip:~`;
+	print "$res\n";
+	chdir $h;
+	`rm -r $stampname`;
+}

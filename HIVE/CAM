@@ -1,0 +1,303 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+use POSIX;
+use Digest::SHA;
+use File::LibMagic;
+use File::Copy;
+##############################
+# CAM - file scraper DEMON 
+##############################
+my $cam = '/usr/ANONI/HIVE/FEED/norm/cam';
+my @FILE;
+# BIRTH ######################
+die "FAIL STILLBORN $!\n" unless (daemon() == 0);
+# GLOBAL #####################
+my $NAME = name();
+# /HIVE/
+my $ROOT = '/usr/ANONI/HIVE/';
+my $PING = $ROOT.'PING';
+my $BIO = $ROOT.'BIO/'.$NAME;
+my $BIOYAY = $ROOT.'BIO/'.$NAME.'_YAY';
+my $BIOFAIL = $ROOT.'BIO/'.$NAME.'_FAIL';
+my $TODO = $ROOT.'TODO/'.$NAME;
+my $FEED = $ROOT.'FEED/';
+my $POOL = '/usr/ANONI/nfs/dump/pool/';
+my $G = '/usr/ANONI/nfs/dump/g/';
+# attributes
+my $BIRTH = age();
+my $SLEEP = $TODO.'_SLEEP';
+my $RATE = 2;
+my $YAY = 0;
+my $FAIL = 0;
+# LOG ########################
+my ($Lfh, $Yfh, $Ffh); 
+open($Lfh, '>>', $BIO);
+open($Yfh, '>>', $BIOYAY);
+open($Ffh, '>>', $BIOFAIL);
+$Lfh->autoflush(1);
+$Yfh->autoflush(1);
+$Ffh->autoflush(1);
+# PREP #######################
+printf $Lfh ("CAM sup %s\n", TIME());
+ping();
+die "FAIL write pool $!\n" unless (-w $POOL);
+die "FAIL write g $!\n" unless (-w $G);
+die "FAIL write BIO $!\n" unless (-w $BIO);
+die "FAIL write PING $!\n" unless (-w $PING);
+die "FAIL write FEED $!\n" unless (-w $FEED);
+# LIVE #######################
+while (1)
+{
+	@FILE = ();
+	SLEEP($YAY, $FAIL, 'CAM') if (-e $SLEEP);
+	act($_);
+	sleep 3600;
+}
+# CORE #######################
+sub name
+{
+	my $id = int(rand(999));
+	my $name = $$.'_'.$id;
+	return $name;
+}
+sub tombstone
+{
+	my ($cnt, $ttl) = @_;
+	my ($tTIME, $nTIME, $life);
+	$tTIME = age();
+	$nTIME = TIME();
+	$life = "$BIRTH $tTIME";
+	print $Lfh "$nTIME demon: $NAME age: $life yay: $YAY fail: $FAIL\n";
+}
+sub ping
+{
+	my ($Pfh, $curTIME);
+	open($Pfh, '>>', $PING);
+	$curTIME = TIME();
+	print $Pfh "$curTIME $$\n";
+	close $Pfh;
+}
+sub age
+{
+	my $age = localtime();
+	$age =~ s%..........20..%%;
+	$age =~ s%^....%%;
+	$age =~ s% %_%;
+}
+sub TIME
+{
+	my ($t, $mon, $day, $hour, $time);
+	$t = localtime();
+	$mon = (split(/\s+/, $t))[1];
+	$day = (split(/\s+/, $t))[2];
+	$hour = (split(/\s+/, $t))[3];
+	$time = $mon.'_'.$day.'_'.$hour;
+	return $time;
+}
+sub SLEEP
+{
+	my ($cnt, $ttl, @QUE) = @_;
+	my ($Sfh, $timeout, $curTIME);
+	open($Sfh, '<', $SLEEP);
+	$timeout = readline $Sfh; chomp $timeout;
+	$curTIME = TIME();
+	print $Lfh "SLEEP $curTIME $timeout\n";	
+	close $Sfh; unlink $SLEEP;
+	SUICIDE($cnt, $ttl, @QUE) if ($timeout eq 'SUICIDE');
+	tombstone($cnt, $ttl);
+	sleep $timeout;
+}
+sub SUICIDE
+{
+	my ($cnt, $ttl, @QUE) = @_;
+	my $curTIME = TIME();
+	print $Lfh "FKTHEWORLD $curTIME\n";
+	tombstone($cnt, $ttl);
+	que_flush(@QUE);
+	move($TODO, $FEED);
+	die;
+}
+sub que_up
+{
+	my $qfh; my @QUE;	
+	que_get();
+	open($qfh, '<', $TODO);
+	@QUE = readline $qfh; 
+	chomp @QUE; close $qfh;
+	return (@QUE);
+}
+sub que_get
+{
+	my $dh;
+	opendir($dh, $FEED);
+	my @ls = readdir($dh);
+	shift(@ls); shift(@ls);
+	my $que_path = $FEED.$ls[0];
+	move($que_path, $TODO);
+	print $Lfh "que: $que_path\n";
+}
+sub que_flush
+{
+	my (@QUE) = @_;
+	open(my $TODOfh. '>', $TODO);
+	print $TODOfh "$_\n" for (@QUE);
+	close $TODOfh;	
+}
+sub act
+{
+	next unless (-f $cam);
+	my (@SHA);
+
+	my @cmd = slurp($cam);
+	my $target = $cmd[0];
+	my $clan = $cmd[1];
+	$target =~ s%/\z%%;
+
+	dir_walk($target, \&fill);
+	for (@FILE)
+	{
+
+		my $sha = xs($_,$POOL,$G);
+		push(@SHA,$sha);
+		print "$sha $_\n";
+	}
+	my $t = TIME();
+	rep($t,$clan,$_) for (@SHA);
+	my $ttl = @SHA;
+
+	$YAY += $ttl;
+	tombstone('CAM', $ttl);
+	unlink $cam;
+}
+sub rep
+{
+	my ($date, $clan, $tag) = @_;
+
+	open(my $rfh, '>>', "/CLAN/pool/$clan");
+	print $rfh "$date $tag\n";
+	close $rfh;
+
+	return 0;
+}
+sub dir_walk
+{ 
+	my ($DIR, $code) = @_;
+	my $dir;
+	$DIR =~ s%/\z%%;
+
+	$code->($DIR);
+	if (-d $DIR)
+	{
+		my $file;
+		unless(opendir $dir, $DIR)
+		{
+			warn "FAIL open dir $DIR: $!\n";
+			return;
+		}
+		while ($file = readdir $dir)
+		{
+			next if $file eq '.' || $file eq '..';
+			dir_walk("$DIR/$file", $code);
+		}
+	}
+}
+sub fill 
+{
+	push @FILE, $_[0] if -f $_[0];
+}
+# XTRACTION & STANDARDIZE 
+sub xs 
+{
+  my ($file, $POOL, $G) = @_;
+  my $sha = f_digest($file); 
+  print "FAIL sha $file $!" if (!defined $sha);
+
+  my $meta = $G.'g'.$sha;
+  unless (eval { open(my $fh, '>>', $meta) })
+  {
+    print "!!!! FAIL meta $sha\n" unless (-e $meta);
+    return;
+  }
+  open(my $mfh, '>>', $meta);
+  my $iname = xsname($file); 
+  my $ipath = xspath($file);
+  my $isize = xssize($file);
+  my $imime; 
+  print "FAIL mime_enc $file $sha\n" unless eval { $imime = file_mime_encoding($file) };
+  print $mfh "$iname\n$ipath\n$isize\n$imime\n";
+  close $mfh;
+
+  copy("$file", "$POOL$sha");
+  print "$file $POOL$sha\n";
+  return $sha;
+}
+sub f_digest
+{
+  my ($file) = @_;
+  my $digester = Digest::SHA->new('sha256');
+  $digester->addfile( $file, 'b' );
+  return $digester->hexdigest;
+}
+sub xsname
+{
+  my ($file) = @_;
+  $file =~ s?^.*/??;
+  $file =~ s?\s??g;
+  return $file;
+}
+sub xspath
+{
+  my ($file) = @_;
+  $file =~ s?/?_?g;
+  return $file;
+}
+sub file_mime_encoding
+{
+  my ($file) = @_;
+  my $magic = File::LibMagic->new();
+  my $info = $magic->info_from_filename($file);
+  my $des = $info->{description};
+  $des =~ s?[/ ]?.?g;
+  $des =~ s/,/_/g;
+  my $md = $info->{mime_type};
+  $md =~ s?[/ ]?.?g;
+  my $enc = sprintf("%s %s %s", $des, $md, $info->{encoding});
+  return $enc;
+}
+sub xssize
+{
+  my ($file) = @_;
+  my $size = -s $file;
+  return $size;
+}
+sub slurp 
+{
+	my ($file) = @_;
+
+	open(my $subfh, '<', $file) or die "FAIL slurp $file : $!\n";
+	my @slurp = readline $subfh;
+	close $subfh; chomp @slurp;
+
+	return @slurp;
+}
+sub daemon
+{
+	die "FAIL fork 1 $!\n" if ((my $pid = POSIX::fork()) < 0);
+	if ($pid != 0)
+		{ exit(0); }
+	POSIX::setsid() or die "FAIL setsid $!\n";
+	die "FAIL fork 2 $!\n" if ((my $pid2 = POSIX::fork()) < 0);
+	if ($pid2 != 0)
+		{ exit(0); }
+#////////////////////////////////////////////////
+	die "FAIL chdir tmp $!\n" unless chdir("/usr/ANONI/HIVE/");
+#////////////////////////////////////////////////
+	POSIX::umask 0;	
+	my $fd = 3;
+	do { POSIX::close($fd); $fd++; } while ($fd < 1024);
+	my $des = '/dev/null';
+	open(STDIN, '<', $des);
+	open(STDOUT, '>', $des);
+	open(STDERR, '>', $des);
+	return 0;
+}

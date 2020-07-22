@@ -1,0 +1,238 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+use POSIX;
+##############################
+# MAID - housekeeper DEMON 
+#     dis-bitch-keepz-da-house
+##############################
+# BIRTH ######################
+die "FAIL STILLBORN $!\n" unless (daemon() == 0);
+# GLOBAL #####################
+my $NAME = name();
+# /HIVE/
+my $ROOT = '/usr/ANONI/HIVE/'
+my $PING = $ROOT.'PING';
+my $BIO = $ROOT.'BIO/'.$NAME;
+my $BIOYAY = $ROOT.'BIO/'.$NAME.'_YAY';
+my $BIOFAIL = $ROOT.'BIO/'.$NAME.'_FAIL';
+my $TODO = $ROOT.'TODO/'.$NAME;
+my $FEED = $ROOT.'FEED/';
+my $POOL = '/usr/ANONI/dump/pool/';
+my $G = '/usr/ANONI/dump/g/';
+# attributes
+my $BIRTH = age();
+my $SLEEP = $TODO.'_SLEEP';
+my $RATE = 100;
+my $YAY = 0;
+my $FAIL = 0;
+# LOG ########################
+my ($Lfh, $Yfh, $Ffh); 
+open($Lfh, '>>', $BIO);
+open($Yfh, '>>', $BIOYAY);
+open($Ffh, '>>', $BIOFAIL);
+$Lfh->autoflush(1);
+$Yfh->autoflush(1);
+$Ffh->autoflush(1);
+# PREP #######################
+printf $Lfh ("MAID blow-me %s\n", TIME());
+ping();
+die "FAIL write pool $!\n" unless (-w $POOL);
+die "FAIL write g $!\n" unless (-w $G);
+die "FAIL write BIO $!\n" unless (-w $BIO);
+die "FAIL write PING $!\n" unless (-w $PING);
+die "FAIL write TODO $!\n" unless (-w $TODO);
+die "FAIL write FEED $!\n" unless (-w $FEED);
+die "FAIL write PING $!\n" unless (-w $PING);
+# LIVE #######################
+while (1)
+{
+	my ($cnt, $ttl);
+	my @QUE = que_up();
+# SLEEP ######################
+	do { print $Lfh "bored\n"; sleep 3600; next} if (!@QUE);
+# WORK #######################
+	$cnt = 0;
+	$ttl = @QUE;
+	print $Lfh "ttl $ttl\n";
+	for (@QUE)
+	{
+		SLEEP($cnt, $ttl, @QUE) if (-e $SLEEP);
+		act($_);
+		if ($cnt % $RATE == 0)
+		{
+			tombstone($cnt, $ttl);
+			que_flush(@QUE);
+		}
+		$cnt++;
+	}
+	unlink $TODO;
+}
+# CORE #######################
+sub name
+{
+	my $id = int(rand(999));
+	my $name = $$.'_'.$id;
+	return $name;
+}
+sub tombstone
+{
+	my ($cnt, $ttl) = @_;
+	my ($tTIME, $nTIME, $life);
+	$tTIME = age();
+	$nTIME = TIME();
+	$life = "$BIRTH $tTIME";
+	print $Lfh "$nTIME demon: $NAME age: $life yay: $YAY fail: $FAIL\n";
+}
+sub ping
+{
+	my ($Pfh, $curTIME);
+	open($Pfh, '>>', $PING);
+	$curTIME = TIME();
+	print $Pfh "$curTIME $$\n";
+	close $Pfh;
+}
+sub age
+{
+	my $age = localtime();
+	$age =~ s%..........20..%%;
+	$age =~ s%^....%%;
+	$age =~ s% %_%;
+}
+sub TIME
+{
+	my ($t, $mon, $day, $hour, $time);
+	$t = localtime();
+	$mon = (split(/\s+/, $t))[1];
+	$day = (split(/\s+/, $t))[2];
+	$hour = (split(/\s+/, $t))[3];
+	$time = $mon.'_'.$day.'_'.$hour;
+	return $time;
+}
+sub SLEEP
+{
+	my ($cnt, $ttl, @QUE) = @_;
+	my ($Sfh, $timeout, $curTIME);
+	open($Sfh, '<', $SLEEP);
+	$timeout = readline $Sfh; chomp $timeout;
+	$curTIME = TIME();
+	print $Lfh "SLEEP $curTIME $timeout\n";	
+	close $Sfh; unlink $SLEEP;
+	SUICIDE($cnt, $ttl, @QUE) if ($timeout eq 'SUICIDE');
+	tombstone($cnt, $ttl);
+	sleep $timeout;
+}
+sub SUICIDE
+{
+	my ($cnt, $ttl, @QUE) = @_;
+	my $curTIME = TIME();
+	print $Lfh "FKTHEWORLD $curTIME\n";
+	tombstone($cnt, $ttl);
+	que_flush(@QUE);
+	move($TODO, $FEED);
+	die;
+}
+sub que_up
+{
+	my $qfh; my @QUE;	
+	que_get();
+	open($qfh, '<', $TODO);
+	@QUE = readline $qfh; 
+	chomp @QUE; close $qfh;
+	return (@QUE);
+}
+sub que_get
+{
+	my $dh;
+	opendir($dh, $FEED);
+	my @ls = readdir($dh);
+	shift(@ls); shift(@ls);
+	my $que_path = $FEED.$ls[0];
+	move($que_path, $TODO);
+	print $Lfh "que: $que_path\n";
+}
+sub que_flush
+{
+	my (@QUE) = @_;
+	open(my $TODOfh. '>', $TODO);
+	print $TODOfh "$_\n" for (@QUE);
+	close $TODOfh;	
+}
+sub rep
+{
+	my ($date, $clan, $name) = @_;
+
+	open(my $rfh, '>>', "/REP/$clan");
+	print $rfh "$name\n";
+	close $rfh;
+
+	return 0;
+}
+sub pool_nfs_sweep
+{
+	my @pool = @_;
+	my $loc = '/usr/ANONI/nfs';
+	for (@pool)
+	{
+		next if (-d "$loc/$_");
+		`zpool import -f -o altroot=$loc $_`;
+		sleep 60;
+		`zfs set sharenfs=on $_`;
+		`zfs set readonly=on $_`;
+		print $Lfh "FAIL $_ $!\n" unless (-d "$loc/$_");
+	}
+}
+sub act
+{
+	sleep 3600;
+	my @pool = slurp('/etc/nfs');
+	pool_nfs_sweep(@pool);
+}
+sub sup
+{
+	my(%h, %j);
+	my @h = slurp('/var/log/used');
+	my @j = slurp('/usr/ANONI/var/log/used');
+
+	wipe($_, '/usr/home') for (@h);
+	wipe($_, '/usr/ANONI/usr/home') for (@j);
+}
+sub wipe
+{
+	my ($usr, $udir) = @_;
+	my $ssh = "$udir/.ssh/";
+	`rm -r $ssh*`;	
+	mkdir $ssh;
+	`chmod -R 000 $ssh`;
+	return 0;
+}
+sub slurp 
+{
+	my ($file) = @_;
+	my $subfh; 
+	my @slurp;
+
+	open($subfh, '<', $file) or die "FAIL slurp $file : $!\n";
+	@slurp = readline $subfh;
+	close $subfh; chomp @slurp;
+
+	return @slurp;
+}
+sub daemon
+{
+	die "FAIL fork 1 $!\n" if ((my $pid = POSIX::fork()) < 0);
+	if ($pid != 0)
+		{ exit(0); }
+	POSIX::setsid() or die "FAIL setsid $!\n";
+	die "FAIL fork 2 $!\n" if ((my $pid2 = POSIX::fork()) < 0);
+	if ($pid2 != 0)
+		{ exit(0); }
+	die "FAIL chdir tmp $!\n" unless chdir("$ROOT");
+	POSIX::umask 0;	
+	my $fd = 3;
+	do { POSIX::close($fd); $fd++; } while ($fd < 1024);
+	my $des = '/dev/null';
+	open(STDIN, '<', $des);
+	open(STDOUT, '>', $des);
+	open(STDERR, '>', $des);
+	return 0;
+}

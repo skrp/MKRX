@@ -1,0 +1,254 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+use POSIX;
+use Digest::SHA;
+use File::Copy;
+##############################
+# ALEX - $KEY miner
+##############################
+my $ROOT = '/usr/ANONI/HIVE/';
+my $PING = $ROOT.'PING';
+# BIRTH ######################
+die "FAIL STILLBORN $!\n" unless (daemon() == 0);
+# GLOBAL #####################
+my $NAME = name();
+# /HIVE/
+my $BIO = $ROOT.'BIO/'.$NAME;
+my $BIOYAY = $ROOT.'BIO/'.$NAME.'_YAY';
+my $BIOFAIL = $ROOT.'BIO/'.$NAME.'_FAIL';
+my $FEED = $ROOT.'FEED/';
+my $TODO = $ROOT.'TODO/';
+# attributes
+my $BIRTH = age();
+my $SLEEP = $TODO.'_SLEEP';
+my $RATE = 100;
+my $YAY = 0;
+my $FAIL = 0;
+# LOG ########################
+my ($Lfh, $Yfh, $Ffh); 
+open($Lfh, '>>', $BIO);
+open($Yfh, '>>', $BIOYAY);
+open($Ffh, '>>', $BIOFAIL);
+$Lfh->autoflush(1);
+$Yfh->autoflush(1);
+$Ffh->autoflush(1);
+# PREP #######################
+printf $Lfh ("ALEX to the WORLD %s\n", TIME());
+ping();
+die "FAIL write BIO $!\n" unless (-w $BIO);
+die "FAIL write PING $!\n" unless (-w $PING);
+die "FAIL write FEED $!\n" unless (-w $FEED);
+die "FAIL write PING $!\n" unless (-w $PING);
+# PREP #######################
+my @blk;
+my $OP = 0;
+$SIG{INT} = \&sig;
+# LIVE #######################
+while (1)
+{
+	my $rs = `jot -r 1 1500 3600`;
+	sleep $rs;
+	my $i = 0;
+	while ($i < 20)
+	{
+		act();
+		sleep 60;
+		$i++;
+	}
+# SLEEP ######################
+	if (-e $SLEEP)
+	{
+			my @QUE; $QUE[0]='alex';
+			tombstone($YAY, $FAIL);
+			SLEEP($YAY, $FAIL, @QUE);
+	}
+}
+# CORE #######################
+sub name
+{
+	my $id = int(rand(999));
+	my $name = $$.'_'.$id;
+	return $name;
+}
+sub tombstone
+{
+	my ($cnt, $ttl) = @_;
+	my ($tTIME, $nTIME, $life);
+	$tTIME = age();
+	$nTIME = TIME();
+	$life = "$BIRTH $tTIME";
+	print $Lfh "$nTIME demon: $NAME age: $life yay: $YAY fail: $FAIL\n";
+}
+sub ping
+{
+	my ($Pfh, $curTIME);
+	open($Pfh, '>>', $PING);
+	$curTIME = TIME();
+	print $Pfh "$curTIME $$\n";
+	close $Pfh;
+}
+sub age
+{
+	my $age = localtime();
+	$age =~ s%..........20..%%;
+	$age =~ s%^....%%;
+	$age =~ s% %_%;
+}
+sub TIME
+{
+	my ($t, $mon, $day, $hour, $time);
+	$t = localtime();
+	$mon = (split(/\s+/, $t))[1];
+	$day = (split(/\s+/, $t))[2];
+	$hour = (split(/\s+/, $t))[3];
+	$time = $mon.'_'.$day.'_'.$hour;
+	return $time;
+}
+sub daemon
+{
+	die "FAIL fork 1 $!\n" if ((my $pid = POSIX::fork()) < 0);
+	if ($pid != 0)
+		{ exit(0); }
+	POSIX::setsid() or die "FAIL setsid $!\n";
+	die "FAIL fork 2 $!\n" if ((my $pid2 = POSIX::fork()) < 0);
+	if ($pid2 != 0)
+		{ exit(0); }
+	die "FAIL chdir tmp $!\n" unless chdir("$ROOT");
+	POSIX::umask 0;	
+	my $fd = 3;
+	do { POSIX::close($fd); $fd++; } while ($fd < 1024);
+	my $des = '/dev/null';
+	open(STDIN, '<', $des);
+	open(STDOUT, '>', $des);
+	open(STDERR, '>', $des);
+	return 0;
+}
+sub SLEEP
+{
+	my ($cnt, $ttl, @QUE) = @_;
+	my ($Sfh, $timeout, $curTIME);
+	open($Sfh, '<', $SLEEP);
+	$timeout = readline $Sfh; chomp $timeout;
+	$curTIME = TIME();
+	print $Lfh "SLEEP $curTIME $timeout\n";	
+	close $Sfh; unlink $SLEEP;
+	SUICIDE($cnt, $ttl, @QUE) if ($timeout eq 'SUICIDE');
+	tombstone($cnt, $ttl);
+	sleep $timeout;
+}
+sub SUICIDE
+{
+	my ($cnt, $ttl, @QUE) = @_;
+	my $curTIME = TIME();
+	print $Lfh "FKTHEWORLD $curTIME\n";
+	tombstone($cnt, $ttl);
+	que_flush(@QUE);
+	move($TODO, $FEED);
+	die;
+}
+sub act
+{
+############################
+	return if ($OP == 1);
+	$OP = 1;
+	my $tmp = '/KRIP/id_rsa';
+	my $pub = '/KRIP/id_rsa.pub';
+############################
+	`ssh-keygen -q -N "" -t rsa -b 2048 -f $tmp`;
+############################
+	my @pub = slurp($pub);
+	my @pp = split(" ", $pub[0]);
+
+	open(my $pfh, '>', $pub);
+	print $pfh "$pp[0] $pp[1]";
+	close $pfh;
+############################
+	my $nsha = file_digest($tmp);
+	my $sdir = '/KRIP/norm/'.$nsha;
+	mkdir $sdir;
+	move($tmp, "$sdir/");
+	move($pub, "$sdir/");
+	$YAY++;
+############################
+	unlink $tmp; unlink $pub;
+	my $irs = `jot -r 1 150 360`;
+	sleep $irs;
+	my @pass = neopass();
+	`ssh-keygen -q -N "$pass[0]" -t rsa -b 2048 -f $tmp`;
+############################
+	my @ppub = slurp($pub);
+	my @ppp = split(" ", $pub[0]);
+
+	open(my $ppfh, '>', $pub);
+	print $ppfh "$pp[0] $ppp[1]";
+	close $ppfh;
+############################
+	my $lsha = file_digest($tmp);
+	my $ssdir = '/KRIP/lord/'.$lsha;
+	mkdir $ssdir;
+	move($tmp, "$ssdir/");
+	move($pub, "$ssdir/");
+	`echo "$pass[1]" > $ssdir/p`;
+	$YAY++;
+	$OP = 0;
+############################
+}
+sub neopass
+{
+	my @p = qw(0 . 1 2 3 4 5 6 + 7 8 9 / * - q w e r a s d f z x c v);
+	my @pass;
+############################
+	my $cnt2 = 0;
+	while ($cnt2 < 4)
+	{
+		my @set = `jot -r 5 0 26`;
+		chomp @set;
+		for (@set)
+		{
+			no warnings 'uninitialized';	
+			$pass[0] .= $p[$_];
+			$pass[1] .= $p[$_];
+		}
+		$cnt2++;
+		$pass[1] .= ' ';
+	}
+############################
+	chop $pass[1];
+	return @pass;
+}
+sub file_digest
+{
+  my ($file) = @_;
+  my $digester = Digest::SHA->new('sha256');
+  $digester->addfile( $file, 'b' );
+  return $digester->hexdigest;
+}
+sub sig
+{
+	if ($OP == 1)
+		{ return if ($OP == 1); }
+	else
+		{ act(); }
+}
+sub rep
+{
+	my ($date, $clan, $name) = @_;
+
+	open(my $rfh, '>>', "/REP/$clan");
+	print $rfh "$name\n";
+	close $rfh;
+
+	return 0;
+}
+sub slurp 
+{
+	my ($file) = @_;
+	my $subfh; 
+	my @slurp;
+
+	open($subfh, '<', $file) or die "FAIL slurp $file : $!\n";
+	@slurp = readline $subfh;
+	close $subfh; chomp @slurp;
+
+	return @slurp;
+}

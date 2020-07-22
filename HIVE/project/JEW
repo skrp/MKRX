@@ -1,0 +1,102 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+use Digest::SHA;
+use File::Copy;
+#############################
+# BANK - node $KEY mgmt DEMON
+#############################
+my %REP;
+
+my @REP = slurp("/BANK/REP");
+
+for (@REP)
+{
+	my @i = split(" ",$_);
+	$REP{$i[0]} = $i[1];
+}
+#############################
+my %dispatch = 
+{
+	ixfr => \&ixfr,
+	xxfr => \&xxfr,
+	buy => \&buy,
+	sell => \&sell,
+	help => \&help,
+};
+#############################
+sub bank
+{
+	my ($cmd, $clan, $src, $dst, $cost) = @_;
+
+	my $response = $dispatch{$cmd}->($clan, $src, $dest, $cost);
+
+	print $Lfh "$cmd $clan $response\n";
+	$YAY++;
+}
+#############################
+sub ixfr
+{
+	my ($src, $dst, $key) = @_;
+
+	move("$src/$key","$dest/$key");
+	move("$src/p$key","$dest/p$key");
+
+#	`chown -R $usr /usr/home/$usr`;
+
+#	`echo --1 >> /CLAN/den/$clan`;
+
+	return $!;
+}
+#############################
+sub xxfr
+{
+	my ($src, $dst, $key, $cost) = @_;
+
+	`scp -i $cost $src/$key $dst:~/BANK/pool/$key`;
+	`scp -i $cost $src/p$key $dst:~/BANK/pool/p$key`;
+
+#	`echo --1 >> /CLAN/den/$clan`;
+
+	return $!;
+}
+#############################
+sub buy 
+{
+	my ($clan, $src, $dst, $cost) = @_;
+
+	my @meta = slurp("$src");
+	$node = $meta[0];
+	$grp = $meta[1];
+
+	my $amt = $REP{$node};
+
+	$response = ixfr($src, $dst, $cost);
+
+	`echo ++$amt >> /CLAN/den/$clan`;
+
+	return $response;
+}
+#############################
+sub sell
+{
+	my ($clan, $src, $dst, $node, $grp) = @_;
+
+	my $amt = $REP{$node};
+
+	$response = ixfr($src, $dst, "/BANK/pool/$u[0]");
+
+	`echo --$amnt >> /CLAN/den/$clan`;
+
+	return $response;
+}
+#############################
+sub help
+	{ print "ixfr xxfr buy sell\nARG1 clan ARG2 src ARG3 dst ARG4 cost-key\n";}
+#############################
+sub f_digest 
+{
+    my ($filename) = @_;
+    my $digest = Digest::SHA->new(256);
+    $digest->addfile($filename, "b");
+    return $digest->hexdigest();
+}

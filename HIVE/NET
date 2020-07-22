@@ -1,0 +1,182 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+use File::Copy;
+##############################
+# VERI - node 2 node trust txn
+# method of the day at /etc/motd
+# node banner & open trust evidence 
+##############################
+# build first day rep motd
+# motd -> TXN
+##############################
+# ACT - evidence of attribute
+##############################
+#  1) CLAN banner
+#  2) kernel
+#  3) hostname & REP 
+#  4) age
+#  5) pool size
+#  6) open $KEY count
+#  7) CENSUS
+#######  8) .ssh/ wipe upon login time 
+#  9) service & age 
+#  9) sha {NETDAYTTL} [alphanum sort]
+# 10) sha {node_motd} [alphanum sort]
+# 11) node node_clan rep_xfr wit1 wit2 wit3
+##############################
+# TXN - HOST / CLAN REP exchange
+#   HOST gain REP -> CLAN buy rep $KEY/CLAN
+#
+##############################
+# WIT - verify attribute
+##############################
+# CLAN testing protocol of a node
+# Upon pass HIVE creates a txn_witness
+#    /BANK/VAULT/DAY/$sha_txn(act,node,wit1,wit2,wit2)
+#
+# All 4 nodes contain txn_file
+# nodes send net same files each node verified by otopsk krip proof
+# DAY compile 
+#            each node same alphanum sort
+#            trunc at error && unlink node
+#            recompile & compare to net_recompile
+#
+# hosname fe3
+# cat /BANK/VAULT/43/aa190ce > "scp fe3 ny8j 9o9o wn3i"
+# hosname ny8i 
+# cat /BANK/VAULT/43/aa190ce > "scp fe3 ny8j 9o9o wn3i"
+# hosname 9o9o
+# cat /BANK/VAULT/43/aa190ce > "scp fe3 ny8j 9o9o wn3i"
+# hosname wn3i 
+# cat /BANK/VAULT/43/aa190ce > "scp fe3 ny8j 9o9o wn3i"
+##############################
+# 11) each node act() witness 
+#     sha list of act [alphanum sort]
+#          txn rep node to CLAN witl wit2 wit3 [alphanum sort]
+#          txn rep CLAN to node wit1 wit2 wit3 [alphanum sort]
+#          ping node wit1 wit2 wit3 [alphanum sort]
+#          scp node wit1 wit2 wit3 [alphanum sort]
+#          ssh node wit1 wit2 wit3 [alphanum sort]
+#          irc node wit1 wit2 wit3 [alphanum sort]
+#          nfs node wit1 wit2 wit3 [alphanum sort]
+#          ftp node wit1 wit2 wit3 [alphanum sort]
+#          http node wit1 wit2 wit3 [alphanum sort]
+#          proxy node wit1 wit2 wit3 [alphanum sort]
+#          zfs node wit1 wit2 wit3 [alphanum sort]
+#          HIVE node wit1 wit2 wit3 [alphanum sort]
+#          CENSUS node wit1 wit2 wit3 [alphanum sort]
+##############################
+# sha-verified proof of state of each node on network
+# each node to participate must run daily [50hr] protocol
+# ping, scp, ftp, http, nfs, 
+# 50hr window time to complete
+# HIVE demons award $KEY for daily quest 
+# CLAN chosen at random to offer
+# first-accpet & compete win
+# thus $KEY propogate thru network
+# $KEY not created equal
+# thus life exists never permit
+# ultimate master
+# SYSTEM OF ANARCHY
+##############################
+# '->' net KRIP tunnel
+# '=' secure in kernel-only 
+##############################
+# usr con -> ANONI  = 
+#         heir = CLAN
+#              = $KEY via HIVE to CLAN dir
+#              = $KEY net-trade via REP
+# usr VOLLY $KEY -> proxy CLAN dir 
+##############################
+my ($DAY) =@ARGV;
+die "AR1 day\n" unless (defined $DAY);
+##############################
+die "FAIL /etc/NET\n" unless (-e '/etc/NET');
+my @net = slurp('/etc/NET');
+##############################
+my ($AGE, $REP); 
+my $yest = $DAY;
+$yest--;
+##############################
+my $node = `hostname`; chomp $node;
+my $ydir = "/BANK/VAULT/$yest/$node/";
+my $ymotd = "/BANK/VAULT/$yest/$node/motd"; 
+die "FAIL yesterday $ydir\n" unless (-d $ydir);
+##############################
+#my @TABLE = slurp("/BANK/TABLE/$yest/$node/TABLE");
+#$AGE += $TABLE[0];
+#$REP += $TABLE[1];
+##############################
+my $ddir = "/BANK/VAULT/$DAY/";
+die "FAIL exist $ddir\n" if (-d $ddir);
+mkdir $ddir; 
+`chmod 775 $ddir && chgrp rep $ddir`;
+mkdir "$ddir/$node"; 
+`chmod 775 $ddir/$node && chgrp rep $ddir/$node`;
+my $motd = "/BANK/VAULT/$DAY/$node/motd"; 
+##############################
+`touch $motd`;
+open(my $afh, '>>', "$motd");
+##############################
+prior();
+close $afh;
+`cp $motd /etc/motd`;
+##############################
+sub prior
+{
+	my @pmotd = slurp($ymotd);
+##############################
+	my $i = 0;
+	while ($i < 22)
+  		{ print $afh "$pmotd[$i]\n"; ++$i; }
+##############################
+	my $kern = `uname -a`;
+	chomp $kern;
+	print $afh "$kern\n";
+##############################
+	$DAY = $pmotd[23];
+	$AGE = $pmotd[24];
+	$REP = $pmotd[25];
+##############################
+	$DAY += 1;
+	$AGE += 1;
+	$REP = $REP + 1000;
+	print $afh "$DAY\n$AGE\n$REP\n";
+##############################
+}
+sub pop
+{
+	for @net
+	{
+		die "FAIL exist $ndir\n" if (-d $ndir);
+		mkdir $ndir; 
+		`chmod 775 $ddir/$_ && chgrp rep $ddir/$_`;
+		my $nmotd = "/BANK/VAULT/$DAY/$_/motd"; 
+	}	
+}
+##############################
+sub slurp 
+{
+	my ($file) = @_;
+	my $subfh; 
+	my @slurp;
+
+	open($subfh, '<', $file) or die "FAIL slurp $file : $!\n";
+	@slurp = readline $subfh;
+	close $subfh; chomp @slurp;
+
+	return @slurp;
+}
+sub cr_grp
+{
+  my (@cr_c) = @_;
+  my @cr_grp;
+
+  die "FAIL cr_grp undef ARRAY cr_c\n" unless defined $cr_c[0];
+  push(@cr_grp, $_) for (@cr_c);
+  push(@cr_grp, "x$_") for (@cr_c);
+
+  `pw groupadd $_` for (@cr_grp);
+  
+  return @cr_grp;
+}

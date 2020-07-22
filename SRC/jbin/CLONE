@@ -1,0 +1,32 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+########################################
+# CLONE - build host specific clone lists
+########################################
+my ($lone) = @ARGV;
+die "ARG1 LONE file\n" unless (-e $lone);
+########################################
+my (%nodes, %host);
+########################################
+open(my $fh, '<', $lone);
+my @lines = <$fh>;
+close $fh; chomp @lines;
+# BUILD  HASH ##########################
+for (@lines)
+{
+  my @entry = split(" ",$_);
+  $nodes{$entry[0]} = $entry[1];
+  $host{$entry[1]} = 0;
+}
+# FILE PER HOST ########################
+for (keys %host)
+{
+	my $ihost = $_;
+	open(my $ifh, '>', $ihost);	
+# CYCLE FIND SHA PER HOST ##############
+	for (keys %nodes)
+	{
+		my $isha = $_;
+		print $ifh "$isha\n" if ($nodes{$_} eq $ihost);
+	}
+}

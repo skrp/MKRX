@@ -1,0 +1,37 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+###########################
+# PERM - chmod chown filesys
+###########################
+my ($node) = @ARGV;
+die "FAIL ARG1 node\n" unless (defined $node);
+###########################
+`chmod 777 '/usr/ANONI/HIVE/FEED/norm'`;
+`chmod 777 /usr/ANONI/nfs/$node/pub`;
+###########################
+`chmod -R 700 /root/`;
+`chmod 775 /BANK/ && chgrp wheel /BANK/`;
+`chmod 770 /BANK/pool/ && chgrp wheel /BANK/pool/`;
+`chmod 770 /BANK/g/ && chgrp wheel /BANK/g/`;
+`chmod 775 /BANK/VAULT && chgrp wheel /BANK/VAULT/`;
+###########################
+`chmod 770 /KRIP/ && chgrp src /KRIP/`;
+`chmod 770 /KRIP/norm && chgrp src /KRIP/norm`;
+`chmod 770 /KRIP/lord && chgrp src /KRIP/lord`;
+###########################
+`chmod -R 555 /bin/ && chgrp src /bin/*`;
+`chmod -R 555 /usr/src/KERN/ && chgrp src /usr/src/KERN/`;
+`chmod 555 /usr/ANONI/nfs/`;
+`chmod 555 /usr/ANONI/nfs/$node/ && chgrp $node /usr/ANONI/nfs/$node/`;
+`chmod 555 /usr/ANONI/nfs/$node/WORLD/ && chgrp $node /usr/ANONI/nfs/$node/WORLD/`;
+###########################
+`chmod 555 /usr/ANONI/nfs/$node/dump/ && chgrp $node /usr/ANONI/nfs/$node/dump/`;
+`chmod 333 /usr/ANONI/nfs/$node/dump/pool && chgrp $node /usr/ANONI/nfs/$node/dump/pool/`;
+`chmod 333 /usr/ANONI/nfs/$node/dump/g/ && chgrp $node /usr/ANONI/nfs/$node/dump/g/`;
+###########################
+`chmod 700 /root/ && chown root /root/`;
+###########################
+`chmod +x /etc/rc.d/hive`;
+`chown daemon:daemon /var/spool/lpd/lp`;
+`chmod 700 /var/spool/lpd/lp`;
+# /etc/group

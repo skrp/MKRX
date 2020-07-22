@@ -1,0 +1,131 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+use File::Copy;
+use Digest::SHA;
+###########################
+# WORLD - host buildworld 
+###########################
+my ($node) = @ARGV;
+die "ARG1 node\n" unless (defined $node);
+(-d 'SRC/distfiles') or die "FAIL INSTALLDIR\n";;
+# ROOT ####################
+copy("conf/.cshrc",'/root/');
+# KRIP ####################
+`zfs create -o mountpoint=/KRIP zroot/KRIP`;
+mkdir '/KRIP/norm/';
+mkdir '/KRIP/lord/';
+###########################
+mkdir '/usr/src/KERN/';
+`cp -R SRC/* /usr/src/KERN/`;
+# ANONI ###################
+`zfs create zroot/usr/ANONI`;
+`zfs create zroot/usr/ANONI/usr`;
+`zfs create zroot/usr/ANONI/usr/home`;
+mkdir '/usr/ANONI/LIB';
+`cp -R LIB/* /usr/ANONI/LIB/`;
+# BANK ####################
+`zfs create -o mountpoint=/BANK zroot/BANK`;
+`zfs create -o mountpoint=/BANK/pool zroot/BANK/pool`;
+`zfs create -o mountpoint=/BANK/g zroot/BANK/g`;
+`zfs create -o mountpoint=/BANK/VAULT zroot/BANK/VAULT`;
+`mkdir /BANK/VAULT/0`;
+# NFS #####################
+print "FAIL nfs\n" if (cr_nfs($node) != 0);
+# HIVE ####################
+`zfs create -o mountpoint=/usr/ANONI/HIVE zroot/HIVE`;
+
+mkdir("/usr/ANONI/HIVE/BIO/");
+mkdir("/usr/ANONI/HIVE/TODO/");
+mkdir("/usr/ANONI/HIVE/FEED/");
+mkdir("/usr/ANONI/HIVE/FEED/norm");
+
+`touch /usr/ANONI/HIVE/PING`;
+`cp HIVE/* /bin/ && cp HIVE/* /usr/ANONI/HIVE/BIO/`;
+# conf ####################
+`cp SRC/bin/* /bin/`;
+copy('SRC/conf/src.conf','/etc/src.conf');
+copy('SRC/conf/pf_net','/etc/pf_net');
+copy('SRC/conf/make.conf','/etc/');
+copy('SRC/conf/motd','/etc/');
+copy('SRC/conf/purgehost','/etc/');
+copy('SRC/conf/pf.conf','/etc/');
+copy('SRC/conf/ntpd.conf','/usr/local/etc/ntpd.conf');
+copy('SRC/conf/rc.conf','/etc/');
+copy('SRC/conf/sshd_config','/etc/ssh/sshd_config');
+copy('SRC/conf/ttys', '/etc/');
+copy('SRC/conf/KERN','/usr/src/sys/amd64/conf/KERN');
+copy('SRC/conf/sysctl.conf','/etc/');
+copy('SRC/conf/jail.conf','/etc/');
+copy('SRC/conf/login.conf','/etc/');
+copy('SRC/conf/exports','/etc/');
+copy('SRC/conf/hive', '/etc/rc.d/hive');
+copy('SRC/conf/NET', '/etc/NET');
+
+my $hn = `hostname`; chomp $hn;
+`echo hostname='$hn' >> /etc/rc.conf`;
+
+my @slur = slurp('/etc/exports');
+open(my $exfh, '>', '/etc/exports');
+print $exfh "$slur[0]$hn";
+close $exfh;
+
+#`cp conf/fstab /etc/fstab`;
+#`cp conf/resolv.conf /etc/resolv.conf`;
+#`cp conf/start_if.em0 /etc/start_if.em0`;
+# PRINTER #################
+`mkdir -p /var/spool/lpd/lp`;
+# PURGE ###################
+`pw userdel toor`;
+unlink '/home';
+open(my $hfh, '<', '/etc/purgehost');	
+my @lines = readline $hfh;
+close $hfh; chomp @lines;
+chdir("/");
+`rm -rf $_` for (@lines);
+############################
+sub cr_nfs
+{
+	my ($node) = @_;
+	$node =~ s%/\z%%;
+
+	my $rnfs = "zroot/usr/ANONI/nfs/$node";
+	my $pub = "$rnfs/pub";
+	my $WORLD = "$rnfs/WORLD";
+	my $dump = "$rnfs/dump";
+
+	my $p = "/usr/ANONI/nfs/$node/dump/pool";
+	my $g = "/usr/ANONI/nfs/$node/dump/g";
+
+	`zfs create zroot/usr/ANONI/nfs`;
+#	`zfs set sharenfs=on /usr/ANONI/nfs`;
+	`zfs create $rnfs`;
+	`zfs set sharenfs=on $rnfs`;
+	`zfs create $pub`;
+	`zfs set sharenfs=on $pub`;
+	`zfs create $WORLD`;
+	`zfs set sharenfs=on $WORLD`;
+	`zfs create $dump`;
+	`zfs set sharenfs=on $dump`;
+
+	`mkdir $p`;
+	`mkdir $g`;
+
+	`chmod 555 /usr/ANONI/nfs/`;
+	`chmod 555 /usr/ANONI/nfs/$node/`;
+	`chmod 777 /usr/ANONI/nfs/$node/pub`;
+	`chmod 555 /usr/ANONI/nfs/$node/WORLD`;
+	`chmod -R 333 /usr/ANONI/nfs/$node/dump`;
+	return 0;
+}
+sub slurp 
+{
+	my ($file) = @_;
+	my $subfh; 
+	my @slurp;
+
+	open($subfh, '<', $file) or die "FAIL slurp $file : $!\n";
+	@slurp = readline $subfh;
+	close $subfh; chomp @slurp;
+
+	return @slurp;
+}

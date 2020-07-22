@@ -1,0 +1,67 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+###########################
+# WORLD - jail buildworld 
+###########################
+# devfs ruleset
+###########################
+# MUST BE IN INSTALL DIR
+die "FAIL INSTALL PATH\n" unless (-d 'SRC/jinstall');
+###########################
+my $b = 'SRC/jbin/';
+my (@bin) = glob("$b*");
+chomp @bin;
+`cp $_ /bin/` for (@bin);
+###########################
+`pw useradd -n toad -d /nonexistent -s /usr/sbin/nologin`;
+`mkdir /toad`;
+`cp SRC/jbin/TOAD /toad/TOAD`;
+`cp SRC/jconf/toad /etc/rc.d/toad`;
+`mkdir /toad/dump`;
+`mkdir /toad/dump/g/`;
+`mkdir /toad/dump/pool/`;
+`mkdir /toad/pub/`;
+`mkdir /toad/paste/`;
+
+`chmod -R 644 /toad`;
+`chmod -R 333 /toad/dump/pool/`;
+`chmod -R 333 /toad/dump/g/`;
+`chmod -R 755 /toad/pub/`;
+`chown -R toad /toad/`;
+
+`chmod +x /etc/rc.d/toad`;
+###########################
+`cp SRC/jconf/motd /etc/`;
+`cp SRC/jconf/purgejail /etc/`;
+`cp SRC/jconf/rc.conf /etc/rc.conf`;
+`cp SRC/jconf/sshd_config /etc/ssh/sshd_config`;
+`cp SRC/jconf/ttys /etc/ttys`;
+`cp SRC/jconf/sysctl.conf /etc/sysctl.conf`;
+`cp SRC/jconf/sshrc /etc/sshrc`;
+`cp SRC/jconf/toad /etc/rc.d/toad`;
+#`cp SRC/jconf/login.conf /etc/login.conf`;
+###########################
+`pw userdel toor`;
+`unlink /home/`;
+###########################
+my @lines = slurp('/etc/purgejail');
+
+chdir("/");
+`rm -rf $_` for (@lines);
+print "JAIL PURGED\n";
+
+`chmod -R 700 /root/`;
+`chown -R root /root/`;
+###########################
+sub slurp 
+{
+	my ($file) = @_;
+	my $subfh; 
+	my @slurp;
+
+	open($subfh, '<', $file) or die "FAIL slurp $file : $!\n";
+	@slurp = readline $subfh;
+	close $subfh; chomp @slurp;
+
+	return @slurp;
+}

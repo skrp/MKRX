@@ -1,0 +1,74 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+use File::Copy;
+##############################
+# NET - node 2 node trust 
+##############################
+# node banner & open trust evidence 
+##############################
+#  1) CLAN banner
+#  2) kernel
+#  3) hostname & REP 
+#  4) age
+#  5) pool size
+#  6) open $KEY count
+#  7) CENSUS
+#  8) .ssh/ wipe upon login time 
+#  9) service & age 
+#  9) sha {NETDAYTTL} [alphanum sort]
+# 10) sha {node_motd} [alphanum sort]
+# 11) node node_clan rep_xfr wit1 wit2 wit3
+##############################
+my ($DAY) = @ARGV;
+die "ARG1 day\n" unless (defined $DAY);
+##############################
+my $AGE = 1;
+my $REP = 1000;
+##############################
+my @net = slurp('/etc/NET');
+my $host = `hostname`; 
+chomp $host;
+push(@net,$host);
+##############################
+my $ddir = "/BANK/VAULT/$DAY/";
+die "FAIL exist $ddir\n" if (-d $ddir);
+mkdir $ddir; 
+`chmod 775 $ddir && chgrp rep $ddir`;
+##############################
+for (@net)
+{
+	my $node = $_;
+	mkdir "$ddir/$node"; 
+	`chmod 775 $ddir/$node && chgrp $node $ddir/$node`;
+}
+##############################
+first();
+##############################
+sub first 
+{
+	my @pmotd = slurp('/etc/motd');
+	`touch "$ddir/$host/motd"`;
+	open(my $afh, '>>', "$ddir/$host/motd");
+	my $i = 0;
+	while ($i < 22)
+  		{ print $afh "$pmotd[$i]\n"; ++$i; }
+##############################
+	my $kern = `uname -a`;
+	chomp $kern;
+	print $afh "$kern\n";
+##############################
+	print $afh "$DAY\n$AGE\n$REP\n";
+##############################
+}
+sub slurp 
+{
+	my ($file) = @_;
+	my $subfh; 
+	my @slurp;
+
+	open($subfh, '<', $file) or die "FAIL slurp $file : $!\n";
+	@slurp = readline $subfh;
+	close $subfh; chomp @slurp;
+
+	return @slurp;
+}

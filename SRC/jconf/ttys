@@ -1,0 +1,15 @@
+console	none				unknown	off insecure
+ttyv0	"/usr/libexec/getty Pc"		xterm	on  insecure
+ttyv1	"/usr/libexec/getty Pc"		xterm	on  insecure
+ttyv2	"/usr/libexec/getty Pc"		xterm	on  insecure
+ttyv3	"/usr/libexec/getty Pc"		xterm	on  insecure
+ttyv4	"/usr/libexec/getty Pc"		xterm	on  insecure
+ttyv5	"/usr/libexec/getty Pc"		xterm	on  insecure
+ttyv6	"/usr/libexec/getty Pc"		xterm	on  insecure
+ttyv7	"/usr/libexec/getty Pc"		xterm	on  insecure
+ttyv8	"/usr/local/bin/xdm -nodaemon"	xterm	off insecure
+ttyu0	"/usr/libexec/getty 3wire"	vt100	onifconsole insecure
+ttyu1	"/usr/libexec/getty 3wire"	vt100	onifconsole insecure
+ttyu2	"/usr/libexec/getty 3wire"	vt100	onifconsole insecure
+ttyu3	"/usr/libexec/getty 3wire"	vt100	onifconsole insecure
+dcons	"/usr/libexec/getty std.9600"	vt100	off insecure

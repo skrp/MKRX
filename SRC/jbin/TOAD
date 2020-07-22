@@ -1,0 +1,213 @@
+#!/usr/bin/perl
+use Mojolicious::Lite;
+use Mojolicious::Plugin::SetUserGroup;
+use Digest::SHA 'sha1_hex';
+#########################
+# pedrk - http server
+#########################
+# SETUP #################
+my $DUMP = '/toad/dump/';
+my $dir = '/toad/paste/';
+my $pub = '/toad/pub/';
+my $hn = `hostname`;
+
+die "no dump dir" unless -d $DUMP;
+die "no paste dir" unless -d $dir;
+die "no pub dir" unless -d $pub;
+
+my $max = 10_000_000_000; # ~10GB
+
+plugin SetUserGroup => {user => 'toad', group => 'toad'};
+app->config(hypnotoad => {listen => ['http://*:80']});
+# HOME ##################
+get '/' => sub {
+	my $c = shift;
+	$c->stash(name => "$hn");
+	return $c->render(template => 'index');
+};
+# UPLOAD ################
+get '/upload' => sub {
+	my $c = shift;
+	return $c->render(template => 'upload');
+};
+post '/upload' => sub {
+	my $c = shift;
+	my $file = $c->req->upload('file');
+# ERROR NULL UP ##############
+	unless ($file) {
+		return $c->render(
+		template => 'error',
+		message => 'Upload failed. File not specified.'
+		);
+	}
+# ERROR SIZE #################
+	my $size = $file->size;
+	if ($size > $max) {
+		return $c->render(
+		template => 'error',
+		message => 'Upload failed. File size over 10GB'
+		);
+	}
+# STORE ######################
+	my $name = $file->filename;
+	my $newfile = $DUMP . $name;
+	$file->move_to($newfile);
+	$c->render(text => "Thanks for $size bytes");
+};
+# RAW ########################
+get '/raw' => sub {
+	my $c = shift;
+	$c->render(template => 'raw');
+};
+post '/raw', sub {
+	my $c = shift;
+	my $paste = $c->param('paste');
+	$c->stash(paste => 'paste/');
+	return $c->render(message => 'PASTE FAILED') unless $paste;
+	my $enc_paste = Mojo::ByteStream->new($paste)->encode('utf-8');
+	my $pre_id = sha1_hex($enc_paste);
+	my $id = substr($pre_id, 0, 6);
+	my $loc = $dir . $id;
+	open(my $pfh, '>', $loc);	
+	print $pfh $enc_paste;
+	$c->render(text => "wikiark.org/raw/$id");
+};
+# GET PASTE ##################
+get '/paste/:id' => sub {
+	my $c = shift;
+	my $id = $c->stash('id');
+	my $loc = $dir . $id;
+	return $c->render(message => 'PASTE NO EXIST') unless -e $loc;
+	my $paste = slurp($loc);
+	$c->render(text => $paste, format => 'txt'); 
+};
+# GET TXT ####################
+get '/tome/:num' => sub {
+	my $c = shift;
+	my $num = $c->stash('num');
+	my $loc = $tome.$num;
+	return $c->render(message => 'PASTE NO EXIST') unless -e $loc;
+	my $paste = slurp($loc);
+	$c->render(text => $paste, format => 'txt'); 
+};
+# LIST #######################
+get '/list' => sub {
+	my $c = shift;
+	my @l;
+
+	push @l, "tome/$_" for `ls $tome`;	
+	push @l, "paste/$_" for `ls $dir`;	
+
+	my $i;
+	$i.=$_ for (@l);
+	$c->stash(list =>"$i");
+	
+	$c->render(template => 'list');
+};
+################################
+app->start();
+sub slurp 
+{ 
+	my ($file) = @_; 
+	my $subfh; my @slurp; 
+	open($subfh, '<', $file) or die "FAIL slurp $file : $!\n"; 
+	@slurp = readline $subfh;
+	my $i;
+	$i.=$_ for (@slurp);
+	return $i;
+}
+################################
+__DATA__
+@@ raw.html.ep
+<html>
+    <head>
+        <title>RAWBIN</title>
+        <style type="text/css">
+            html, body {height: 100%}
+            body {background: #fff;font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;}
+            h1,h2,h3,h4,h5 {font-family: times, "Times New Roman", times-roman, georgia, serif; line-height: 40px; letter-spacing: -1px; color: #444; margin: 0 0 0 0; padding: 0 0 0 0; font-weight: 100;}
+            a,a:active {color:#555}
+            a:hover{color:#000}
+            a:visited{color:#000}
+            img{border:0px}
+            pre{padding:0.5em;overflow:auto;overflow-y:visible;width:600px;}
+            pre.lines{border:0px;padding-right:0.5em;width:50px}
+ 						#body {width:700px;min-height:100%;height:auto !important;height:100%;margin:0 auto -6em;}
+            #header {text-align:center;padding:0em 0em 2em 0em;}
+            .content {background:#eee;border:2px solid #ccc;width:700px}
+            .created, .modified {color:#999;margin-left:10px;font-size:small;font-style:italic;padding-bottom:0.5em}
+            .modified {margin:0px}
+            .label{text-align:right;vertical-align:top;width:1%}
+            .center{text-align:center}
+            .error {padding:2em;text-align:center}
+            #footer{width:75%;margin:auto;font-size:80%;text-align:center;padding:2em 0em 2em 0em;height:2em;}
+            .push {height:6em}
+            .clear {clear:both}
+        </style>
+    </head>
+    <body>
+    <div id="body">
+        <div id="header">RAWBIN</div>
+
+        <%== content %>
+
+        <form method="post" action="">
+        <table width="100%">
+        <tr><td></td><td>
+        <textarea name="paste" cols="100" rows="50"></textarea>
+        </td></tr>
+        <tr><td></td><td><input type="submit" value="Paste!" /> <input type="reset" value="Clear"></td></tr>
+        </form>
+   <tr><td><br /></td><td></td></tr>
+        </table>
+
+        <div class="push"></div>
+        </div>
+
+        <div class="clear">
+    </body>
+</html>
+@@ error.html.ep
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" >
+    <title>Error</title>
+  </head>
+  <body>
+    <%= $message %>
+  </body>
+</html>
+@@ upload.html.ep
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" >
+    <title>MKRX WEB DUMP</title>
+  </head>
+  <body>
+    <h1>WEB FILE DUMP</h1>
+    <form method="post" action="<%= url_for('upload') %>" enctype ="multipart/form-data">
+      <div>
+        Select File
+        <input type="file" name="file" >
+        <input type="submit" value="Upload" >
+      </div>
+    </form>
+  </body>
+</html>
+@@ list.html.ep
+<html>
+  <body>
+	<%= $list %>
+  </body>
+</html>
+
+@@ index.html.ep
+<html>
+	<head><title><%= $name %> underNET</title>
+	<body>
+		<h1>Meri Kann cibR punX_____unix-network</h1>
+		<%= link_to upload => 'upload' %>
+		<%= link_to raw => 'raw' %>
+		<%= link_to list => 'list' %>
+	</body>
+</html>

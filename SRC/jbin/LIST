@@ -1,0 +1,36 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+###############################
+# LIST - update node LIST
+###############################
+my ($target_dir) = @ARGV;
+die "ARG1 target_dir\n" unless (defined $target_dir);
+$target_dir =~ s%/\z%%;
+###############################
+my (@pool, @active);
+###############################
+@pool = `zfs list`;
+chomp @pool;
+###############################
+for (@pool)
+{
+	push (@active, $_) if (/pool/);
+}
+###############################
+chomp @active;
+print"$_\n" for @active;
+###############################
+for (@active)
+{
+	my $p = $_;
+	$p =~ s%/.*%%;
+###############################
+	my $path = "/$p/pool/";
+	opendir(my $idh, $path) or die "$path FAIL\n";
+	my @i = readdir $idh;
+	chomp @i;
+###############################
+	my $i = $target_dir.'/'.$p.'_LIST';
+	open(my $ifh, '>', $i);
+	print $ifh "$_\n" for (@i);
+}

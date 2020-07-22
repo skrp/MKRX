@@ -1,0 +1,43 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+############################
+# PKG - install addons to unix 
+
+# PORT ####################
+portinstall();
+modinstall();
+############################
+sub portinstall
+{
+  my @ports = ( 'vim');
+
+  for (@ports)
+  {
+    `mkdir /usr/ports/$_`;
+    `tar -xC /usr/ports/ -f SRC/distfiles/$_.tar`;
+    chdir("/usr/ports/$_");
+    print "FAIL configure $_\n" unless (-e 'configure');
+    `/bin/sh configure`;
+    `make install`;
+  }
+}
+############################
+sub modinstall
+{
+  my @mods = ('p.useragent', 'p.file_find', 'p.digest_sha', 'p.file_libmagic', \
+    'p.list_utils', 'p.archive_any', 'p.lwp_https');
+
+  for (@mods)
+  {
+    `mkdir /usr/ports/$_`;
+    `tar -xC /usr/ports/ -f SRC/distfiles/$_.tar`;
+    chdir("/usr/ports/$_");
+#################
+#    print "FAIL Makefile.Pl\n" unless (-e 'Makefile.PL');
+   # print "FAIL mod $_\n" 
+   # if (-e 'Makefile.PL')
+#################
+    `perl Makefile.PL`;
+    `make install`;
+  }
+}

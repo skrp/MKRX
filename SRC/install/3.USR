@@ -1,0 +1,213 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+use File::Copy;
+use Digest::SHA;
+###########################
+# USR - populate access keys 
+###########################
+my ($node, $bank) = @ARGV;
+die "ARG1 node ARG2 bank\n" unless (defined $bank);
+###########################
+$bank =~ s%/\z%%;
+my $kdump = $bank.'/BANK/pool/';
+my $mdump = $bank.'/BANK/g/';
+die "FAIL BANK $kdump\n" unless (-d $kdump);
+my $shell = '/bin/csh';
+# PASSBUTTON ##############
+my @p = qw(0 . 1 2 3 4 5 6 + 7 8 9 / * - q w e r a s d f z x c v);
+my @dict = slurp('/usr/share/dict/web2');
+# HEIR #####################
+# rabbit -> con_host -> ANONI_jail -> heir_jail -> rabbit_host -> root 
+# POPULATE #################
+my @grp = qw(wheel clan rep net zfs hive src ark log);
+my @ngrp = slurp('/etc/NET');
+push @grp,$_ for @ngrp;
+cr_grp(@grp);
+my $limit = 5000;
+my @list = 100..$limit;
+# CONSOLE USR #############
+my $con = '/usr/home/con';
+cr_home('con');
+my $fault = 'con';
+
+`echo $fault | pw useradd -h 0 -n con -d $con -s $shell`;
+
+`chmod -R 700 $con`;
+`chown -R con $con`;
+###########################
+cr_home($_) for (@list);
+cr_usr($_) for (@list);
+###########################
+sub cr_home
+{
+  my ($usr) = @_;
+  my $home = "/usr/home/$usr/";
+  
+  my $ssh = $home.'.ssh/';
+  my $udir = $home.'mount/';
+  my $b = $home.'BANK';
+  my $g = $home.'BANK/g/';
+  my $p = $home.'BANK/pool/';
+
+  mkdir $home;
+  mkdir $b;
+  mkdir $udir; 
+  mkdir $ssh;
+  mkdir $g;
+  mkdir $p;
+  
+  `chown -R $usr $home`;
+  copy("SRC/conf/.cshrc","$home");
+# chmod .cshrc readonly
+  `ln -s /usr/ANONI/HIVE/FEED/norm/ /usr/home/$usr/FEED`;
+}
+############################
+sub cr_usr
+{
+  my ($iu) = @_;
+  my $home = "/usr/home/$iu/";
+  `pw useradd -n $iu -d $home -s $shell`;
+
+  my $igrp = cr_grpup();
+  `pw usermod -n $iu -G $igrp`;
+
+  cr_prikey($kdump, $mdump, $node, $igrp, $iu);
+
+  `chmod -R 700 $home`;
+  `chown -R $iu $home`;
+}
+sub cr_pass 
+{
+	my $pass;
+
+	my $cnt = 0;
+	my $p_count = @p; $p_count--;
+	my $tag = `jot -r 1 0 4`;
+	chomp $tag;
+	while ($cnt < 5)
+	{
+		$cnt++;
+		if ($cnt == $tag)
+		{
+			die "FAIL set\n" unless (defined $dict[2]);	
+			my $i = `jot -r 1 0 230000`;
+			chomp $i;
+			$pass .= $dict[$i];
+			$pass .= ' ';
+			next;
+		}
+		my @set = `jot -r 5 0 $p_count`;
+		chomp @set;
+		for (@set)
+		{
+			no warnings 'uninitialized';	
+			$pass .= $p[$_];
+		}
+		$pass .= ' ';
+	}
+############################
+	chop $pass;
+	return $pass;
+}
+sub slurp 
+{
+	my ($file) = @_;
+	my @slurp;
+
+	open(my $subfh, '<', $file) or die "FAIL slurp $file : $!\n";
+	@slurp = readline $subfh;
+	close $subfh; chomp @slurp;
+
+	return @slurp;
+}
+sub cr_grp
+{
+  my (@cr_c) = @_;
+  my @cr_grp;
+
+  die "FAIL cr_grp undef ARRAY cr_c\n" unless defined $cr_c[0];
+  push(@cr_grp, $_) for (@cr_c);
+  push(@cr_grp, "x$_") for (@cr_c);
+
+  `pw groupadd $_` for (@cr_grp);
+  
+  return @cr_grp;
+}
+sub f_digest
+{
+    my ($filename) = @_;
+    my $digest = Digest::SHA->new(256);
+    $digest->addfile($filename, "b");
+    return $digest->hexdigest();
+}
+sub cr_grpup
+{
+  die "FAIL array undef\n" unless defined $grp[0];
+  my $cr_timr = 10;
+  my $cr_grpup;
+  while ($cr_timr > 0)
+  {
+     --$cr_timr;
+
+     my $cr_rnum = `jot -r 1 0 16`;
+     $cr_grpup = $grp[$cr_rnum];
+     last if defined $grp[$cr_rnum];
+  }
+  return $cr_grpup;
+}
+#use Digest::SHA;
+#use File::Copy;
+#cr_keymeta
+#my ($kdump, $mdump, $node, $igrp, $iu) = @ARGV;
+#cr_prikey($kdump, $mdump, $node, $igrp, $iu);
+############################
+sub cr_prikey
+{
+	my ($kdump, $mdump, $node, $igrp, $iu) = @_;
+	die "ARG1 keydump ARG2 keymetadump ARG3 node ARG4 grp ARG5 usr\n" unless (defined $iu);
+############################
+	my $key = "/usr/home/$iu/.ssh/id_rsa";
+	my $pub = $key.'.pub';
+############################
+        die "FAIL key exist $key\n" if (-e $key);
+############################
+	my $ipass = cr_pass();
+	my $upass = $ipass;
+	$ipass =~ s% %%g;
+############################
+	`ssh-keygen -q -N "$ipass" -t rsa -b 2048 -f $key`;
+############################
+	my @pub = slurp($pub);
+	my @pp = split(" ", $pub[0]);
+	
+	open(my $pfh, '>', $pub);
+	print $pfh "$pp[0] $pp[1]";
+	close $pfh;
+############################
+	my $isha = f_digest($key);
+	move($key, "$kdump/$isha");
+############################
+	copy($pub, "$kdump/p$isha");
+	move($pub, "/usr/home/$iu/.ssh/authorized_keys");
+############################
+	cr_keymeta($mdump, $node, $igrp, $iu, $isha);
+
+	open(my $kfh, '>>', "$mdump/k$isha");
+	print $kfh "$upass\n";
+	close $kfh;
+
+	print "YAY $key\n";
+}
+############################
+sub cr_keymeta
+{
+	my ($mdump, $node, $igrp, $iu, $isha) = @_;
+	
+	open(my $keyfh, '>>', "$mdump/k$isha");
+	
+	print $keyfh "$node\n";
+	print $keyfh "$igrp\n";
+	print $keyfh "$iu\n";
+	
+	close $keyfh;
+}

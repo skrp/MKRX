@@ -1,0 +1,31 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+use File::Find::Rule;
+use Digest::SHA ();
+##########################
+# SHA - recursive file sha
+##########################
+my ($target, $shalog) = @ARGV;
+die "ARG1 target ARG2 log\n" unless (defined $shalong);
+##########################
+my %response; 
+my $rule;
+##########################
+open(my $lfh, '>>', $shalog) or die "couldn't open shalog argv[1]";
+# FIND FILES RECURSIVE #####
+$rule = File::Find::Rule->file()->start($target);
+%response;
+while(defined(my $file = $rule->match)) {
+    my ($sha) = file_digest($file) or die "couldn't sha $file";
+    $response{$file} = $sha;	
+}
+print $lfh "$value:  $key\n" while (my ($key, $value) = each %response);
+# SHA FN ###############
+sub file_digest 
+{
+    my ($filename) = @_;
+    my $digest = Digest::SHA->new(256);
+    $digest->addfile($filename, "b");
+    return $digest->hexdigest();
+}
+########################

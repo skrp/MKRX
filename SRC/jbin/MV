@@ -1,0 +1,26 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+use File::Copy;
+##########################
+# MV - move files in lists
+##########################
+my ($list, $dir, $dump) = @ARGV;
+die "ARG1 list ARG2 target ARG3 dump" unless (defined $dump);
+$dir =~ s%/\z%%;
+$dump =~ s%/\z%%;
+##########################
+open(my $lfh, '<', $list);
+my @list = <$lfh>;
+chomp @list; close $lfh;
+##########################
+for my $line (@list)
+{ 
+	my $f = "$dir/$line"; 
+	move($f, $dump) or print "FAIL $f $!\n"; 
+##########################
+#	print "$line\n" if (-e $f);
+##########################
+}
+##########################
+unlink $list;
+##########################

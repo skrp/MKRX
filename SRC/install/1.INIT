@@ -1,0 +1,7 @@
+#!/bin/sh
+###########################
+# STEP ONE : install perl
+###########################
+tar -xC /usr/ports/ -f SRC/distfiles/perl.tar
+cd /usr/ports/perl/ && ./configure && make && make install
+###########################

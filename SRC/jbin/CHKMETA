@@ -1,0 +1,35 @@
+#!/usr/local/bin/perl
+use strict; use warnings;
+######################################
+# METACHK - confirm uniq file has meta
+######################################
+my ($fmaster, $mmaster) = @ARGV;
+die "ARG1 ARG2\n" unless (defined $mmaster);
+open(my $ffp, '<', $fmaster) or die ("Couldn't open filemaster\n");
+open(my $mfp, '<', $mmaster) or die ("Couldn't open metamaster\n");
+######################################
+my %mkrx;
+my (@file, @meta);
+######################################
+@file = readline $ffp; chomp @file;
+@meta = readline $mfp; chomp @meta;
+
+%mkrx = map{$_ => undef} @file;
+######################################
+for (@meta) 
+{
+	my $f = $_;
+	$f =~ s/^g//;
+	$mkrx{$f} = $_;
+}
+# SCAN FOR META FILES ################
+while (my ($key, $value) = each %mkrx) 
+{
+	print "$key: NEEDS FILE\n" unless (defined $mkrx{$key});
+}
+# COUNT ##############################
+print "SICC POOL COUNT:\n";
+my $size = keys %mkrx;
+print "$size\n";
+exit 0;
+ 

@@ -1,0 +1,9 @@
+single user mode
+reboot machine
+on beastie screen after boot
+2 [enter] 
+This will put the kernel in single user mode
+enter root password
+[enter]
+this will exectute /bin/sh
+/sbin/mount -u /

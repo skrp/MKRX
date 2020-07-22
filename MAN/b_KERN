@@ -1,0 +1,53 @@
+# VARIABLES #######################
+#### $HOST = user created name of computer
+#### $DRIVE = computer-storage-device 
+#### $INIT = name of INIT usb
+#### $ALFADATE = alffabet name 'may0120'
+# INSTALL PROCEEDURE ##############
+#### select Shell
+% camcontrol devlist
+#### this cmd returns all storage-devices
+#### find storage-device of computer-drive not usb 
+//// find DRIVE name 
+//// ada0 usually the drive; da0 usually the usb
+   >>>> camcontrol devlist
+   >>>> <KINGSTON SV300S37A120G 521ABBF0>  at scbus0 target 0 lun 0 (ada0,pass0)
+   >>>> <SanDisk Ultra Fit 1.00>           at scbus6 target 0 lun 0 (da0,pass1)
+   >>>> if=/dev/zero of=/dev/ada1 bs=1M
+
+% dd if=/dev/zero of=/dev/DRIVE bs=1M
+//// give it time to finish
+
+% exit
+
+#### select Install
+#### select Select
+
+#### enter name of node (whatever name not taken)
+
+#### tick options via spacebar 
+#### only have tick: doc port src
+
+#### select Auto (ZFS)
+#### select Select (Install Proceed with Installation)
+#### normat: select stripe
+#### mirror(two drive): select mirror 
+
+#### tick DRIVE
+#### select YES
+
+#### write down root password
+#### set root password
+
+#### select Cancel
+#### select NO
+#### whatever
+#### whatever
+#### select YES
+
+#### only tick dumpdev
+
+#### select NO
+#### select exit
+#### select NO 
+# --- REBOOT ---

@@ -1,0 +1,7 @@
+# SHIFT #######################
+$KEY mgmt
+1) read meta off paper for sha digest
+2) move $KEY & pub from BANK to .ssh/
+3) access shell & cross out paper entry
+4) MAID will remove $KEY chron
+

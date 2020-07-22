@@ -1,0 +1,57 @@
+# TERMS ###########################
+//// BANK - usb with BANK keys
+//// $KEY - name of remote usr
+//// IP4 - ip4 of host
+# NORM_WORLD ######################
+start the new system & reach login
+login as the system console user
+
+user con 
+password con
+
+write down con password
+change the console user password
+
+% passwd
+
+old password is 'con'
+enter the new password twice
+# RABBIT_HOLE #####################
+//// plug in BANK
+
+% con@node /~$ cd 
+% con@node /~$ echo '$BANK zfs' > ~/zoe
+% con@node /~$ ln -s /usr/ANONI/HIVE/FEED/norm/ FEED
+% con@node /~$ cp ~/zoe FEED/
+//// wait for max 10 minutes
+//// DEMON will mount usb in ~/usb/$BANK
+
+find meta in file or paper
+% cp $BANK/BANK/pool/$KEY ~/.ssh/id_rsa
+% cp $BANK/BANK/pool/p$KEY ~/.ssh/known_hosts
+
+from file
+% cat $BANK/BANK/g/k$KEY/p
+or read password off paper
+   >>>> 5+ze- f.2.0 fc1q+ z/cz3
+//// ignore spaces 
+
+% ssh $KEY@IP4
+
+   >>>> ssh 632@1.0.1.2
+   >>>> yes
+   >>>> enter passphrase 
+   >>>> 5+ze-f.2.0fc1q+z/cz3
+#### type contents of p with no spaces
+//// verify ssh via IP4 change in ifconfig
+% ifconfig
+% su
+#### pass = root
+---- RABBIT ----
+% root@node /root$ perl USB/KERN/install/4.POSTJAIL
+% root@node /root$ perl USB/KERN/install/5.MAP
+% root@node /root$ echo 'your_initator_manifest' >> /etc/motd
+#######################
+verify kernel install
+% uname -a
+#######################

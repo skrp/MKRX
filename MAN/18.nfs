@@ -1,0 +1,18 @@
+# NFS ##################
+a user with access to node
+gains access to entire subnet file pools
+
+network able to verify a node hosts a file
+checks files are true to sha digest
+# files ################
+/etc/pf.conf
+/etc/rc.conf
+/etc/exports
+/etc/fstab
+# troubleshoot #########
+zfs set sharenfs=on
+showmount -e
+rpcinfo
+service -e
+chown chmod 
+########################

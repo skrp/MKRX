@@ -1,0 +1,31 @@
+# BEGIN ###########################
+insert usb installer into machine
+
+first step is to drop machine to BIOS
+each motherboard has own hot-key range F2-F12
+
+power on
+BIOS banner tells proper hotkey fast
+
+find the hot-key F2-F12
+this will drop to BIOS 
+
+you may need to reboot many times
+# BIOS step two ###################
+Be curious in BIOS
+Write down cpu processor architecture
+discover if computer supports amd64
+
+look for boot options
+installer-usb must boot first
+
+save & exit BIOS
+FreeBSD demon will display if correct
+# comment #########################
+the first portion 'data=...' takes substantial time
+ssd will read it fast; hdd a bit slow;
+usb if so slow you can read 'data=...'
+# good luck #######################
+curiousity & relentlessness rewards answer
+trial & error is the action of the hacker
+###################################

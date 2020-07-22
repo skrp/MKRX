@@ -1,0 +1,8 @@
+# WIFI ##################
+wifi is best only permitted via usb
+this allows disconnection of radio
+# files #################
+/etc/wpa.supplicant
+#########################
+#########################
+#########################

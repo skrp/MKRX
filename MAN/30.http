@@ -1,0 +1,14 @@
+# http ##################
+MKRX offers a http server
+upload & download files
+access lists poetry src
+post & read text links
+# elinks ################
+elinks is the cli http browser
+#########################
+FIRST MUST INSTALL:
+cpan Mojolicious
+cpan Mojolicious::SetUserGroup
+cpan Mojo::Base
+cpan Mojo::Server::Hypnotoad
+#########################

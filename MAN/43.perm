@@ -1,0 +1,15 @@
+perm
+#    #     #
+user group else
+
+4    2     1
+read write execute
+
+
+777 all write read
+333 all write only
+555 all read/execute
+755 owner write else read
+775 group can write else read
+750 group only read
+700 owner only write

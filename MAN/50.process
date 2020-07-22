@@ -1,0 +1,59 @@
+#######################
+PROCESS
+each process has:
+  id - PID
+  user
+#######################
+each process can fork
+fork is for a process to clone itself then execute code
+like cells in biology
+#######################
+COMPUTER LANGUAGE
+  trace can anchor onto system calls
+SYSTEM TOOL
+  truss is the goto method for quick look
+#######################
+man truss
+truss -p PID
+
+% truss -p 3829
+#######################
+FIRST STEP
+% ps
+  PID TT  STAT    TIME COMMAND
+14204 v3  SX+  0:32.12 perl SRC/install/4.USR yab0 BANK/
+67535 v3  R+   0:00.00 pw useradd -n 3026 -d /usr/home/3026/ -s /bin/csh
+#######################
+STEP B1 
+INSPECT PARENT
+% truss -p 14204
+STEP B2 good-luck catching fork before it dies!
+INSPECT FORK
+% truss -p 67535
+#######################
+STEP A1
+dtrace -s /bin/ALL.d 14204 60
+
+Dtrace code needs to be run with 2 ARG: PID SEC 
+
+STEP A2 good-luck understanding syscalls the chi of kernels!
+CPU     ID                    FUNCTION:NAME
+  0  60338                       :tick-1sec 
+
+  lstat                                                           133
+  unlink                                                          133
+  utimes                                                          133
+  rename                                                          266
+  write                                                           798
+  fcntl                                                          1197
+  openat                                                         1197
+  fork                                                           1734
+  wait4                                                          1734
+  stat                                                           2129
+  fstat                                                          2463
+  ioctl                                                          2932
+  lseek                                                          3198
+  pipe                                                           3468
+  sigprocmask                                                    3468
+  read                                                           5601
+  close                                                          8134

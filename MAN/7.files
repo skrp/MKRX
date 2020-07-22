@@ -1,0 +1,43 @@
+# FILES #######################
+files are permenant elements of a network data pool
+
+ways to get/dump a file
+  scp
+  ssh
+  nfs
+  http
+  usb
+    transient devices
+  sata 
+    devices attached to system
+# SICC ########################
+System In Complete Chaos
+  files are stored as slices across a network
+  a slice is a random sized ordered element of a file
+  sequence to build file & metadata stored isolated from file
+  traffic to retrieve data is obfuscated from actual file
+    usr X needs last slice of file A and first slice of file B from node Y
+    X scp slices from Y will be encrypted data of partial files
+# METHOD ######################
+host mounts zfs drive onto nfs dir
+/usr/ANONI/nfs/$node/$pool/pool/
+
+norm user access zfs drive on node
+/nfs/$node/$pool/pool/
+
+normal & nfs file copy
+cp /nfs/$node/$pool/pool/$f ~/usb/$usb/pool/$f
+
+scp file get
+scp 382@$node:/nfs/$node/$pool/pool/$f myfile
+
+system update pool list
+perl /bin/LIST /nfs/CENSUS/$node/
+# CENSUS ######################
+CENSUS is a process to compile pool lists 
+Intelligent duplication of files is based on lists
+  $file $node1 $node5 $node9
+
+Bounty is created for files 
+which are under threshold for duplication 
+###############################

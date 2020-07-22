@@ -1,0 +1,19 @@
+#########################
+  seller has BANK usb in rpi device
+  seller inserts DUMP usb in rpi
+  seller zeros out DUMP usb
+  seller partitions 500M sections
+  seller creates a zpool for each partition
+  seller populates a random partition with $KEY
+  seller sells DUMP usb
+#########################
+  buyer buys usb DUMP && meta paper
+  buyer imports DUMP usb into rpi
+  buyer moves half $KEY into rpi BANK usb
+  buyer export DUMP
+  buyer imports DUMP into node
+  buyer sends $KEY to 5 clans on different nodes
+  buyer fills 500M 0 block over DUMP partition
+  buyer ssh into clan 
+  buyer ssh into node sold by buyer
+#########################

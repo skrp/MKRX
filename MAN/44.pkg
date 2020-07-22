@@ -1,0 +1,15 @@
+# pk ##########################
+unix system progams are installed via pkg command
+pkg install cmatrix
+# host ########################
+perl
+vim
+openssh
+# jail#########################
+screen
+weechat
+ircd
+mail
+cmatrix
+###############################
+

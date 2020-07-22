@@ -1,0 +1,16 @@
+# PING #################
+nodes send pings to check if online
+host con can ping but not jail usr
+# example ##############
+con@d43l ~/$ ping 1.0.1.5
+   >>> PING 1.0.1.6 (1.0.1.6): 56 data bytes
+   >>> 64 bytes from 1.0.1.6: icmp_seq=0 ttl=64 time=0.302 ms
+
+   >>> --- 1.0.1.6 ping statistics ---
+   >>> 1 packets transmitted, 1 packets received, 0.0% packet loss
+   >>> round-trip min/avg/max/stddev = 0.302/0.302/0.302/0.000 ms
+# nmap #################
+nmap is a powerful hacker tool
+enhanced by great powers
+########################
+

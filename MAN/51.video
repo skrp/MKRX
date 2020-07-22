@@ -1,0 +1,10 @@
+# vidcontrol ######################
+
+Adjust monitor parameters
+% man vidcontrol
+% vidcontrol -i mode
+% vidcontrol MODE_###
+
+when a correct mode found
+set the deflaut screen
+% echo 'allscreens_flags="MODE_###"' >> /etc/rc.conf

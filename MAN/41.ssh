@@ -1,0 +1,21 @@
+# SSH ##########################
+################################
+# reverse shell ################
+# proxy ########################
+# scp ##########################
+# oto ##########################
+# KRIP #########################
+# permissions ##################
+# files ########################
+authorized_keys
+  id_rsa.pub which validates id_rsa
+id_rsa
+  secret key
+known_hosts
+  id_rsa.pub server public key
+# crypto algo ##################
+# best practice ################
+################################
+SET source node group
+this will move the key to .ssh & meta to home
+################################

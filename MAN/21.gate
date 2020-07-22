@@ -1,0 +1,20 @@
+# GATE ##################
+a gate acts as the endpoint to the outernet
+subnet consists of nodes behind a gate
+gate coordinates traffic & protects subnet
+# SETUP #################
+rc.conf 
+	ifconfig_$if="DHCP"
+	gateway_enable="YES"	
+
+reboot
+
+cat /etc/resolv.conf
+find $IP4 from ifconfig
+#########################
+pf.conf
+	ext_if = "$if"
+	ext_self = "$IP4"
+pf_net
+	$IP4
+#########################

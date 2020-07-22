@@ -1,0 +1,49 @@
+# PF #################
+pf.conf acts a network pipes
+else-block containment keeps packets sanitary
+network only passed from TSL origins
+
+gateway forwards ports meant for sockets on other nodes
+a node is given a port at which to offer service to network
+a node is given port for explicit out traffic
+#####################
+/etc/pf_net    this is the white list which allows traffic
+# LOCAL #############
+local redirect will close ports if pf disengaged
+pass on $local_if inet proto tcp from any to any port irc
+pass on $local_if inet proto tcp from any to any port mail 
+pass on $local_if inet proto tcp from $anoni to $self port ssh 
+# EXTER #############
+pass on $ext_if proto icmp from <net> to <net> icmp-type echoreq
+pass on $ext_if proto tcp from <net> to <net> port ssh
+# SUB   #############
+this allows entry to one node behind subnet but not external
+enter other sub node to enter via subnet interface
+pass on $int_if inet proto {tcp, udp} from <net> to <net> port nfs
+pass on $int_if inet proto {tcp, udp} from <sub> to <sub> port ssh
+#####################
+host will redirect external ssh to jail address
+jail disable breaks ssh from norm users to host-only
+
+rdr on $ext_if proto tcp from <net> to <net> port ssh -> $anoni
+#####################
+explicit approved packets only
+this will be silent to scanners
+
+set block-policy drop
+#####################
+harden packet security
+
+scrub on $ext_if all reassemble tcp
+#####################
+block log all
+# man ###############
+man pf
+man pflog
+man pf.conf
+
+man rc.conf
+man tcpdump
+#####################
+#####################
+

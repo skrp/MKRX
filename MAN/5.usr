@@ -1,0 +1,20 @@
+# USERS ###########################
+con    
+   physical-host console user
+norm
+   ssh user in a jail isolated from host
+heir
+   ssh user in a jail isolated from host
+   only user group to access host 
+lord 
+   host access groups
+   only access from jail heir group
+   each group responsible for section of system
+# ROOT ############################
+local-gate con 
+remote-gate network-ssh-ANONI
+
+only way to root node 
+   1) ANONI $KEY => su heir 
+   2) HOST $KEY => ssh-internal wheel 
+   3) RABBIT $KEY => su root

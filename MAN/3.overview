@@ -1,0 +1,62 @@
+# OVERVIEW ########################
+README will process a machine 
+transformation into a unix node
+
+attach node to a peer-2-peer encrypted-network
+# REQUIREMENT #####################
+usb unix installer & setup scripts 
+    freeBSD.10-4.AMD64.memstick.img
+usb to-be-wiped to become BANK
+    populated with new node's $KEY
+# BANK ############################
+BANK/
+   REP
+   pool/
+            two files per access 
+                 id_rsa - named after sha digest of id_rsa
+                 id_rsa.pub - named after sha digest of id_rsa 
+                              prepended with p
+   g/
+            renamed after sha digest of id_rsa 
+            prepended with a k 
+
+            meta file of access key
+                 host group user passphrase
+# SETUP ###########################
+KERN/
+   README
+   bin/
+		host programs
+   jbin/
+		jail programs
+   conf/
+		host conf files
+   jconf/
+		jail conf files
+   HIVE/
+		DEMON code
+   install/
+	        host install proceedure
+   jinstall/
+		jail install proceedure
+CENSUS/ 
+      node/pool/ 
+                lists of files in pool
+      BOUNTY 
+                list of files to be duplicated
+# LAYERS #########################
+    HARDWARE_LAYER   : 
+       motherboard processor memory drive powersupply montior keyboard
+    SOFTWARE_LAYER   : 
+       FreeBSD unix kernel 
+       MKRX-enviornment
+    INTERFACE_LAYER : 
+       shell
+       code-libraries 
+       unix permission access
+    NETWORK_LAYER   : 
+       IPv4 ethernet & wifi link layer 
+       direct-encrypted-tunnels via IPv4 ssh connections
+       proxy tunnels thru varios nodes in network 
+ex: {usr}->ANONI_A -> ANONI_D -> ANONI_J -> sleep 
+    ANONI_J -> ANONI_F -> ANONI_V -> sleep -> {action} 

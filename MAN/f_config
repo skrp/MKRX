@@ -1,0 +1,64 @@
+###############################
+SHELL
+login
+plug in usb
+echo 'zfs poolname' > ~/FEED/zoe
+home.tar -> copy, decrypt & overwrite homedir
+screen
+  vim
+  popkey->node
+  top & ps
+  NEWS->subscription
+  vim-code
+  usb-pool
+  nfs-dir
+###############################
+# CONF
+NEVER LEAVE COMMENTED LINES IN KERN
+EASY TO RECONFIG BUFFER ATTACK RM '#' 
+###############################
+HOST NET
+ping
+scp
+route
+###############################
+NET
+pf_net
+ping
+scp
+###############################
+CENSUS
+count
+DUPE
+LONE
+###############################
+SHARE $KEY
+###############################
+MOTD
+###############################
+HIVE
+anatomy
+scrape
+process
+interact
+###########################
+vim
+###########################
+screen
+###########################
+ssh
+###########################
+scp
+###########################
+irc
+###########################
+man
+###########################
+BANK
+popkey home->
+pumpkey
+
+###########################
+
+###########################
+

@@ -1,0 +1,14 @@
+# JEW #####################################
+HIVE DEMON which sends & buys $KEY
+
+/BANK/BANK  - code
+/BANK/pool/ - $KEY dump
+/BANK/g/    - $KEY meta 
+/BANK/past/ - REP witness & renamed after sha digest
+/CLAN/REP   - REP index 
+###########################################
+have  : $node $quantity 
+want  : $node $value
+buy   : clan REP for $KEY
+sell  : $KEY for clan REP 
+###########################################

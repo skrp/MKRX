@@ -1,0 +1,37 @@
+# IRC ##################
+irc allows for users to chat
+this protocol is only offered localhost
+this ensures encrypted communication
+
+user gains norm-$KEY to a popular node for irc
+user ssh a shell to run weechat
+# Server ###############
+jail
+pkg install ircd-hybrid
+
+rc.conf
+  ircd_hybrid_enable="YES"
+
+cp KERN/jconf/ircd.conf /usr/ANONI/usr/local/etc/ircd-hybrid/
+# Client ###############
+jail
+pkg install weechat
+# how to add server ####
+/server add undernet 127.0.0.1
+# MANDADTORY ###########
+you must set a default nick prior to connect
+/set irc.server.undernet.nicks WHATEVERYOUWANT
+# commands #############
+/connect irc 
+/nick $chatname 
+/list
+/join #mkrx
+/query $user $message
+/close
+/quit
+<F5> cycle windows
+<F6> cycle windows
+# channel cmd ##########
+/op     promote user
+/kick   kick user
+########################

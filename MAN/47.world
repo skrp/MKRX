@@ -1,0 +1,12 @@
+#####################
+WORLD - group auth subnet file share
+host quota each group CLAN a specific quota
+#####################
+host/remote nfs
+	PUB   write & read-only
+	DUMP  write-only
+	WORLD group auth file share
+		CLAN auth via group
+#####################
+#####################
+#####################

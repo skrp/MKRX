@@ -1,0 +1,9 @@
+# screen ################
+screen allows the monitor to be split into windows
+#########################
+<cntl>a: 
+this will drop into screen control mode
+#########################
+#########################
+#########################
+#########################

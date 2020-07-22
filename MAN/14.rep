@@ -1,0 +1,51 @@
+###########################################
+REP is the basis of all net transactions 
+line = $node $clan $value
+
+host earns REP from network
+host pays out clan => --host ++hostclan
+host publishes change to network
+###########################################
+network decided values by adding a host-stamp
+$line $witness $witness $witness
+sha digest of file confirmed by all witness
+###########################################
+hostclan REP can be exchanged for: 
+  zfs quota increase
+  nfs entries
+  vaults
+  $KEY
+  sudo
+  logs
+# REP #############################
+/CLAN/REP
+/CLAN/pool - host file pool 
+/CLAN/src  - host system src 
+/CLAN/log  - host log 
+
+line entry format:
+"$date_$file_$digest_$clan"
+
+pool src log are permenant files of the system
+a single clan is recognized as owner of file
+
+each node stamps this file with sha
+record proven over each node on net
+
+Matrix_The.avi neoUrWifeMyKid
+/etc/pf.conf glottkinskrp
+/log/01may19_auth.log k420ktentaclesincasca
+#################################
+node gains REP over time on net
+each node with same value index
+
+host A 100
+host B 1
+
+user inserts BANK usb
+writes to request fifo
+
+JEW removes 100 $KEY from user bank
+JEW checks $KEY via scp calls
+JEW moves 1 $KEY to node B to user BANK
+############################

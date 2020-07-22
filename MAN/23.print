@@ -1,0 +1,25 @@
+# PRINT ###############
+print is done via both a thermal printer & other printers
+thermal paper is done for security
+
+certain users can print out 
+# setup ###############
+mkdir -p /var/spool/lpd/lp
+chown daemon:daemon /var/spool/lpd/lp
+chmod 770 /var/spool/lpd/lp
+# usb printer #########
+/etc/printcap 
+lp:\
+	:lp=/dev/unlpt0:\
+	:sh:\
+	:mx#0:\
+	:sd=/var/spool/lpd/lp:\
+	:lf=/var/log/lpd-errs:
+# network printer #####
+network /etc/printcap
+lp:\
+	:lp=:rm=network-printer-name:rp=raw:\
+	:sh:\
+	:mx#0:\
+	:sd=/var/spool/lpd/lp:\
+	:lf=/var/log/lpd-errs:

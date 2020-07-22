@@ -1,0 +1,122 @@
+# TERMS ###########################
+//// HOST - node hostname
+//// INSTALLPATH - path with install files
+//// INT - network interface
+//// IP4 - node address { #.#.#.# }
+//// jIP4 - jail address { #.#.#.# }
+# NETWORK   #######################
+Be sure network cable is attached
+ifconfig is used to detect network to setup
+
+//// ifconfig will report network-interfaces
+//// interface { em0,re0,... } is the INT
+//// IP4 are four numbers seperated by '.' { 125.24.10.1 }
+% ifconfig
+   >>>> re0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> metric 0 mtu 1500
+   >>>>      inet 1.0.1.3 netmask 0xff000000 broadcast 1.255.255.255 
+
+   >>>> INT = re0
+   >>>> IP4 = 1.0.1.3
+
+% echo 'ifconfig_INT="DHCP"' >> /etc/rc.conf
+
+% cat /etc/rc.conf
+view host system configuration
+verify network interface info
+
+>>>> infonfig_re0="DHCP"
+
+% /etc/netstart
+
+% pkg 
+follow the prompt type 'y' for yes
+
+% pkg update
+% pkg install perl5
+% pkg install vim
+
+detach network cable
+# GENERIC_WORLD ###################
+% zpool import -f USB
+
+//// IMPORTANT TO CHANGE DIR TO INSTALL DIR
+% cd INSTALLPATH
+
+>>>> cd /usb/
+
+% perl INSTALLPATH/SRC/install/2.WORLD node
+% perl INSTALLPATH/SRC/install/3.USR node
+% perl INSTALLPATH/SRC/install/4.PERM node bank
+% perl INSTALLPATH/SRC/install/5.NET day 
+
+FOR OFFLINE-INSTALL of AMD64 only
+>>>> /bin/sh /usb/install/1.INIT
+
+>>>> perl install/3.USR node
+
+# CONF ################
+configure node to MKRX unix network 
+file below a list of nodes in network
+SRC/install/conf/NET 
+
+% vim /etc/rc.conf
+   >>>> ifconfig_INT="IP4"
+	or
+   >>>> ifconfig_INT="IP4 netmask 255.255.0.0 broadcast SUB.255"
+
+   >>>> ifconfig_INT="5.5.1.0 netmask 255.255.0.0 broadcast 5.5.1.255"
+
+% vim /etc/pf.conf
+   >>>> int_if = "INT" 
+   >>>> self = "IP4"
+   >>>> anoni = "jIP4"
+
+% vim /etc/jail.conf 
+   >>>> interface = 'INT';
+   >>>> ip4.addr = "jIP4";
+   >>>> host.hostname = "anoniHOSTNAME";
+
+% vim /etc/pf_net
+   >>>> IP4 
+   >>>> jIP4 
+
+% vim /etc/NET
+   >>>> node_per_line
+# CUSTOM_WORLD ####################
+edit the kernel file located below
+/usr/src/sys/amd64/conf/KERN
+
+on machine boot 
+kernel is chosen
+
+OPTION 5 of FreeBSD bootmenu
+
+if there is an issue with the kernel file
+switch kernel to generic (original) kernel
+###################################
+% vim  /usr/src/sys/amd64/conf/KERN
+
+this step is the summit of a peak
+whose summit exceeds any mountain
+
+overlook as master of a range
+span past horizons of sphere
+
+purge that which may be purged
+study how the machine is coded
+/usr/src/sys/amd64/conf/NOTES
+###################################
+% rm -r /usr/obj
+% cd /usr/src/
+
+OPTION1 ADVANCED
+% make -j2 buildkernel KERNCONF=KERN
+% make installkernel KERNCONF=KERN
+
+OPTION2 GENERAL
+% make -j2 buildkernel KERNCONF=GENERIC
+% make installkernel KERNCONF=GENERIC
+###################################
+% rm -r /usr/obj
+% reboot
+# - REBOOT -

@@ -1,0 +1,46 @@
+# AUTHENTICATION  #################
+root : heir-$KEY rabbit-$KEY password
+con  : password
+norm : norm-$KEY
+heir : heir-$KEY 
+lord : $KEY password
+clan : password
+
+password is printed via thermal printers
+###################################
+all connections encrypted via single-use keys
+keys are generated via KRIP which farms $KEY
+
+such keys:
+  - generated over various host random over time
+  - prevent man-in-the-middle replay attacks
+  - man-in-the-middle can't know if user is privledged or normal
+  - user account deleted after first-access in leave-no-trace
+  - traded amongst network users to share access to hosts 
+  - gain value relative to other nodes to be exchanged as currency
+  - norm-$KEY traded by DEMONS on host for quests
+  - lord-$KEY traded only via usb
+###################################
+$KEY can 
+  shell once
+  scp unlimited
+  proxy
+  reverse-shell 
+###################################
+Each node has a bank of norm-$KEY for various other nodes
+If a user completes quest it can choose among nodes
+
+this allows for one $KEY to propagate into adquiring access to many nodes
+# BANK ############################
+1) usb that is sanitized
+dd if=/dev/zero of=/dev/$USB
+
+2) usb split into 500M partitions
+a user randomly activates a partition
+dumps $KEY onto partition 
+takes usb to new node & dumps $KEY
+user fills partition 500M giberish
+###################################
+farming $KEY to trade over the net is a constant supply & demand
+usb transported $KEY are valuable by magnitude 
+###################################

@@ -1,0 +1,22 @@
+# TERMS ###########################
+OTOPSK - one time only pre shared key
+$KEY   - OTOPSK access to nodes
+RABBIT - alarm authenticated-wheel hole to host root
+ANONI  - anonymous access shell interface
+WORLD  - unix nfs filesystem
+CLAN   - unix-groups allow persistent data accross ANONI sessions
+PF_NET - network IPv4 connection lists
+NODE   - individual machine with network reputation
+CENSUS - indexes of file duplication
+META   - meta-data of files in pool
+SICC   - system in complete chaos file system
+MKRX   - Meri Kann cibR punX 
+man-in-the-middle - entity intercepts traffic between two nodes
+# IMPORTANT #######################
+%    - command typed into terminal
+//// - comment on action to take
+>>>> - example command
+CAPS - variable to be replaced with value learnt from prior-step
+# BEWARE ##########################
+follow these steps exact
+consequences may be dire

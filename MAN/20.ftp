@@ -1,0 +1,14 @@
+# ftp #################
+ftp is an old protocol
+anonymous only access
+# setup ###############
+pkg install vsftpd
+pkg install ftpproxy
+#######################
+KERN/conf/vsftpd.conf
+#######################
+pub  public files
+motd node banner
+dump write only dir
+#######################
+

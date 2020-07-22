@@ -1,0 +1,10 @@
+# mount #####################
+this allows users to import drives of many file systems to be scraped of data
+zfs ufs nfs ntfs ext fat
+#############################
+ufs:   mount -t ufs /dev/da0s1 /mnt/drive/
+fat:   mount -t msdosfs /dev/da# /mnt/drive/
+ntfs:  fuse-ntfs
+ext:   fuse-ext
+#############################
+#############################

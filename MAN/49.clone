@@ -1,0 +1,47 @@
+# VARIABLES #######################
+//// USB = INIT usb name
+//// NAME = new INIT usb name 
+//// INIT = name of INIT usb
+//// ALFADATE = alffabet name
+# create INIT #####################
+//// do not have either usb inserted
+
+% camcontrol devlist
+
+//// view entries
+//// insert usb-to-be-wiped
+
+% camcontrol devlist
+
+//// find new entry 
+
+//// da# usually the usb
+   >>>> camcontrol devlist
+   >>>> <SanDisk Ultra Fit 1.00>           at scbus6 target 0 lun 0 (da0,pass1)
+   >>>> if=/dev/zero of=/dev/da0 bs=1M
+
+% dd if=/dev/zero of=/dev/USB bs=1M
+//// let it finish
+
+% zpool create NAME /dev/USB
+
+//// connect USB (usb with install data)
+
+% zpool import -f USB
+
+% zfs snapshot INIT/KERN@ALFADATE
+
+% zfs send INIT/KERN@ALFADATE | zfs recv NAME/KERN
+
+% zfs create NAME/BANK
+% zfs create NAME/LOG
+% zfs create NAME/META
+
+% mkdir /NAME/LOG/misc
+% mkdir /NAME/BANK/host/
+
+% cp /INIT/BANK/pf_net /NAME/BANK/pf_net
+
+% zfs snapshot NAME/KERN@ALPHADATE
+
+% zpool export NAME

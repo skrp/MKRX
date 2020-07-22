@@ -1,0 +1,75 @@
+# INTRO ###########################
+journey to the land of unix
+experience C & shell & perl 
+
+ways of deep-sea secrets  
+raw-power of binary logic
+
+this ordeal 
+reward 1337
+
+hard for all
+way to wizard
+
+are you
+ready to go?
+###################################
+README guides step-by-step
+know nothing & learn much
+
+simple uniform-standardization
+encourage plain-understanding 
+
+prove for oneself 
+truth if anonymous
+
+encrypted networks of nodes
+share slices of files
+pool great archive of data
+###################################
+journey reach destination
+gate to deep-trench-maturity
+
+text ahead a patch-work-path
+solitude good for the soul
+
+may nights be indistinguishable from days
+no longer days of man tied to the sun
+
+a day of a wizard an event
+wake to bed tied-only to work
+###################################
+first read a_BIOS -> f_conf
+###################################
+A machine has specific architecture
+Check BIOS on computer boot with an F-KEY "F2" or "F11"
+
+AMD64 - common machine
+###################################
+download the correct FreeBSD operating system for the architecture of machine
+http://ftp-archive.freebsd.org/pub/FreeBSD-Archive/old-releases/ISO-IMAGES/10.4/
+###################################
+obtain a usb larger than 2GB
+put the image onto the usb
+###################################
+example on a unix or linux system
+http://ftp-archive.freebsd.org/pub/FreeBSD-Archive/old-releases/ISO-IMAGES/10.4/FreeBSD-10.4-RELEASE-amd64-memstick.img
+
+change dir to download
+
+insert usb to machine
+check the device via command
+camcontrol devlist
+CRITICAL STEP
+device is as follows: /dev/ada0
+
+% camcontrol devlist
+<Samsung Flash Drive 1100>         at scbus6 target 0 lun 0 (da0,pass4)
+
+device is /dev/da0
+
+now map downloaded operating system onto usb
+
+dd if=FreeBSD-10.4-RELEASE-amd64-memstick.img of=/dev/da0 conv=sync
+###################################
+read MAN/a_BIOS to continue system build

@@ -1,0 +1,39 @@
+# zfs #######################
+
+# zpool #####################
+zpool list
+zpool import
+  list pools that need import
+zpool export
+  exports a pool
+zpool create
+zpool status
+zpool status -x
+zpool destroy
+# admin zpool ###############
+zpool -o mountpoint
+# create zpool ##############
+# zfs #######################
+# create zfs ################
+zfs create
+# admin zfs #################
+zfs list
+zfs list -t snapshot
+zfs set
+zfs get
+zfs snapshot
+zfs send | zfs rec
+zfs -o altroot
+# other #####################
+gpart show
+camcontrol devlist
+#############################
+/etc/pool
+list each node pool
+#############################
+host : nfs share
+con  : mount
+# PERM ######################
+automount on boot
+#############################
+

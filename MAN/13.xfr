@@ -1,0 +1,31 @@
+#################################
+# $KEY XFR ######################
+ted on node via con mounts BANK usb
+ted puts a fraction of $KEY into 13.23.100.9.tar
+ted appends all users to clan's line in /etc/group
+
+ted extracts a norm-$KEY for node 153.21.23.18
+ted reads a small paper '153.21.23.18:568 1029'
+
+# scp -p 568 13.23.100.9.tar 13.23.100.9.motd 1029@153.21.23.18:~/
+ted enters passphrase from small paper 'kamoto 489- *893 96+4 d2Ko'
+# ssh -p 568 1029@153.21.23.18
+ted enters passphrase from small paper 'kamoto 489- *893 96+4 d2Ko'
+
+# MOTD 153.21.23.18
+
+# tar -xf 13.23.100.9.tar  BANK/
+
+ted reads a paper he printed
+# cp BANK/ad349f ~/.ssh/id.rsa
+# cp BANK/pad349f ~/.ssh/known_hosts
+# scp -p 2193 /etc/motd 5486@13.23.100.9:~/ 153.21.23.18_motd
+ted enters passphrase paper 'IKM$ mo89 3+-2 Ndsa fukrmuthr'
+# ssh -p 2930 5486@13.23.100.9
+ted enters passphrase paper 'IKM$ mo89 3+-2 Ndsa fukrmuthr'
+
+# MOTD 13.23.100.9
+
+
+
+

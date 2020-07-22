@@ -1,0 +1,16 @@
+#####################################
+/etc/hosts
+this file will translate numerical IP4 address into hostnames
+#####################################
+example:
+13.34.1.34 hu8u8
+#####################################
+hostname & IP4 is not given data
+the usr must know the value-pair prior
+#####################################
+IP4 of all internal networks /etc/pf_net 
+
+best practice
+    cp /etc/pf_net /etc/hosts
+
+append each line with appropriate value " $hostname"

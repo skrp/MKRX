@@ -1,0 +1,77 @@
+###################################
+user must be root
+
+the next steps:
+ create jail-template
+ create jail-world
+# TERMS ###########################
+//// HOST - node hostname
+//// INSTALLPATH - path with install files
+//// INT - network interface
+//// IP4 - node address { #.#.#.# }
+//// jIP4 - jail address { #.#.#.# }
+###################################
+upon reboot the new unix kernel 
+a custom kernel built for the machine
+
+the install usb is still mounted
+
+user:con
+password:con
+
+simple login to con
+change the con password
+%passwd
+###################################
+get wheel $KEY from usb
+% GRAB /USB/ /usr/home/con/ NODE wheel 5
+
+cat one of the $KEY metadata
+% cat k*
+
+the metadata file is prepended with a 'k'
+the 'k' is followed by the sha256 digest name of $KEY it describes
+
+KEY = skip the k and just tab-complete the name
+
+cp BANK/pool/KEY ~/.ssh/id_rsa
+chmod 700 ~/.ssh/id_rsa
+###################################
+cat the metadata file
+% cat BANK/g/kKEY
+k(KEY) with KEY being the $KEY sha256
+
+login via information
+
+ssh USR@127.0.0.1
+authorize by selecting "yes"
+enter password found on last line of file
+###################################
+% cd /usr/src
+% make -j2 buildworld
+% make installworld
+% make installworld DESTDIR=/usr/ANONI
+% make distribution DESTDIR=/usr/ANONI
+% cp -R /usr/local/ /usr/ANONI/usr/local/
+% zpool export USB 
+# JAIL_WORLD ######################
+% zpool import -o altroot=/usr/ANONI/mnt USB 
+% jail -c anoni
+% jls
+//// verify the jail has the number 1
+% jexec 1 /bin/csh
+###################################
+CHANGE DIR TO INSTALL PATH
+
+% cd /mnt/INSTALLPATH
+###################################
+% perl SRC/jinstall/1.WORLD 
+% perl SRC/jinstall/2.ANONI HOST
+% exit
+
+% zpool export USB
+
+//// unplug USB 
+###################################
+% reboot
+# --- REBOOT ---

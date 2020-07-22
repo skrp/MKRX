@@ -1,0 +1,6 @@
+directory for metadata information on $KEY in pool for ssh authentication
+
+node
+group
+user 
+password [omit spaces]

@@ -1,0 +1,221 @@
+#####################################
+undURnet
+#####################################
+Unix non-central synchronic network
+All inter-node access only by direct encrypted tunnels P2P
+
+Each machine is a FreeBSD node connected directly to peers via pre-shared-encryption
+Each machine has its own route of nodes to which its users are able to obtain a direct connection
+
+Services offered: 
+Massive Data Access, secure terminals, code-workbench, proxy, data-encryption, subnet-gate, WiFi gate, website, mail, chat, game ...
+
+OVERVIEW
+	undURnet offers a stable & secure network framework built for usage: global or standalone
+  Non-central control allows maximum adoption critical to ease a hopeful mass-return to the Terminal
+  
+	A low budget cost model is inherent by design
+  Empower an old computer into a 1337-modded workstation
+  
+  Requisite Material:
+    Manual + USB + keys
+  
+  To get started all required is the Manual, bootable USB, and access keys to other nodes
+  User will boot the USB on a common AMD64 machine into a temporary-live-kernel or permenant install	
+    
+ANTI-SURVIELLENT TECHNOLOGY	
+  Anti-Surveillent technology is critical to retain right of privacy
+  undURnet uses both encryption & obfuscation to guard private activity
+  
+	Mr. Comely, the fired FBI director, set an Agency objective to make encryption illegal [i]. 
+
+  Our Internet Service Providers have been given monitoring power over all networks
+  Data host platforms are monopolized govt-agents which store your data making you forever liable to prosecution
+
+DATA-SCENE
+  IRC & topsites, pirates, were about mastering esoteric methods
+  Relationships built by who you knew & trusted
+  Access to a topsite was proof of legitimacy 
+  Yet topsites consolidated hacker booty
+  Files available were dependent upon collection of members
+  topsites became a govt target and due to the design-flaws allowed members to be hunted down
+  
+  Torrents killed the pirate scene due to three prominent factors 
+    Entry into Torrents required a minimum-skill-set
+    Search-index-system consolidated each booty to be available to all = searchable files
+    Data-packet-method allowed superior data-handling in that world of low-bandwidth
+  Torrent traffic is entirely public & prosecutable to those who both host & leech-data
+  
+  Streaming sites set skill-of-entry to be non-existent
+  Files were searchable & the access was immediate (unlike all other methods)
+  Similar to topsites, the files available depended on the hosts
+  Streaming sites are govt-targets but leechers were immune to prosecution
+
+PROMISE
+  undURnet is built by a unix master craftsman
+  All implementations are battle tested
+  All guarantees are personal
+
+CREATOR
+  Pirate since IRC & topsites as a data-ripper & encoder & bot-file-serve scripter
+  Contributions made to the scene were significant in a small yet critical way
+  Member of many scenes of the two decades & tireless climb to 1337 in unix/pirate methods
+
+  undURnet is a product of operator-immunity from govt-prosecution
+  
+  Critical factors of privacy
+    machine-verification, traffic & data-storage obfuscation, trust model
+    
+  I call for a return to the original scene of Piracy: the unix terminal
+  High-skill-set to prove one worthy of entry barring no-scrub-trash
+
+STABILITY & SECURITY
+  Stability & security is the goal of the unix operating system kernel 
+  Network communication was built in the unix enviornment & will remain most stable at home
+  
+  FreeBSD is the operating system built by academic & theoretic rigor
+  The code is open, the kernel highly-customizable, and reputation legendary
+  undURnet only operates in the FreeBSD Kernel
+  
+KERNEL
+  FreeBSD has a monolithic kernel which allows for several states of operation
+  	Stable: never power-down
+  	Portable: secure accesss in secure & insecure enviornment
+  	Subnet gate: hide from snoopage all devices connected via ehternet & WiFi
+  	Transient No-Trace: boot live act, wipe-imprint, powerdown leaves computer back to normal state
+  	MITM: snoop all outgoing traffic from a computer entirely invisible
+  	Device: usb wipers, key exchangers, data exchangers, bootable-cloners
+
+TERMINAL
+  The user interface to the Kernel is the Terminal as called the Shell
+  undURnet enviornments are homogeneous
+  If a user masters any enviornment, it directly masters all enviornments
+
+PERIODIC & REP
+  undURnet is synchornized & periodic
+  After each period, DAY, the value of each node is calculated into REP
+  
+  REP improves access-key trade-rate on the NET
+  REP is verified & sychronized by git-protocol
+  
+  Many measureable factors value a machine onto the network
+  Age on the net, services offered, data-storage, reputation, ....
+  This value is then monetized in the form of access keys
+
+KEYS
+  Each access key is one-time-only which retains a supply & demand 
+  Access keys are the currency of undURnet
+  
+  The higher value of a node translates into higher value of all available access keys
+  Period duration keeps a stable state in which each machine knows value of all machines
+  This allows for an intelligent market
+  
+  Access keys can be dumped onto a USB and sold for money
+  Users are able to invest in machines & skills and are able to reap all-rewards
+  
+CLAN
+  Each node is able to operate under a group of users called a CLAN
+  A CLAN may have one or many users. A user may have many CLAN
+  
+  Flow of REP
+  REP > machine > CLAN
+  
+  Each DAY, each machine is calculated independently via logs
+  Machine value is then aggregated by CLAN
+  Example:
+  1 = node_A + node_B + node_C : 1 = .5 + .2 +.3
+  clancat = node_A + node_C = .8
+  All clancat node access keys now are traded at the ratio of .8 for the next period
+  All owners of access keys, maintained by clancat, now are benefited by a ratio of .8
+  
+  CLAN gains REP and all owners of CLAN access-keys gain in their investment
+  
+  Some ways to gain REP
+    asset: host-machine, bandwidth, local-net, data-drives
+    service: file-scrape, log-watch, access-key-exchange, protocol-server
+  
+  CLAN growth is a material growth of current market value of all its node access keys
+  There is no royal-road or cheat-gimmick 
+  All CLANS operate on equal conditions is vital to decentralization
+
+SICC
+  System In Complete Chaos is the massive data network file management
+  Data is scraped from external sources and then standardized & stored as file slices at many locations
+  Data stored as file slices obfuscates identity and isolates operator from data hosted
+  The host does not have all the slices of files only parts
+  
+  File slices and meta-data are isolated
+  The location of data slice ignorant to each slices: type, name, list of files, source
+
+CENSUS
+  File parts are stored in a database which ties the slice to all known-locations
+  This allows for explicit-duplication creating the netwide-efficency of storage
+  
+  file disgest: location 1, location 2, ..., location N
+  
+META
+  The original scraper or librarian build databases
+  	Slice sequence to build a file
+	Encryption password to each slice
+	File type, name, category, size, creator
+  This set up allows undURnet to be flexible according to current state
+  Non-persecuted allows for freely-shared indexing of plain-files
+  Persecuted enviornment allows for private indexing of encrypted-files
+  
+  If META is exposed all file slices are known
+  CLAN reputation safeguards this most-critical-resource of the undURnet
+  
+FILE
+  undURnet allows for an unlimited amount of data consolidated or segregate
+  The searchableness of the network data is relative to the enviornment
+  Host operator serving data-slices is noncupable to its set of piecemeal contents
+  
+  Flexibility & Privacy will foster an enviornment for voracious trading activity
+  undURnet currently hosts one of the most diverse booty archives
+  
+  File exchange is a prominent portion of the demand for access to undURnet
+  
+  SCRAPER
+  	user inserts a USB and scrapes the data
+	recieves the CENSUS & META data
+	uploads the META data to CLAN
+	uploads the META to a index-server
+	
+  LEECH
+  	user logs into an index-server
+	searches for file type
+	selects a file name
+	recieves file-slice-sequence, decryption-password-sequence
+	from META is able to link slices to location
+	using the information is able to download all slices & build file
+
+WEAKNESS
+  The masses prefer the lowest cost of entry and so does the government
+  High cost of entry into the undURnet is a rite of passage
+  Only after great difficulty is the gui-monkey convinced to walk as man
+  To fight against the global-squash of privacy
+  
+  Methods to assist entry
+    undURnet Manual: Theory & Implementation
+    Website FAQ, links, chat help
+    Howto video walk-thru
+    In-person exposition of methods
+    
+MARKET
+  IRC & topsites are dead. Torrents aren't thriving. Streaming sites operate by toxic-business.
+  Global masses flood the design which requires the least intellectual commitment
+  Naturally there exists an anti-movement angst
+  
+  undURnet is the place for the elite & wannabe
+  All methods to help educate users are of foremost consideration
+  
+  Methods of undURnet directly build unix skills
+  What ability gained can be used on unix systems
+  
+  Image of users of the undURnet is its vital asset
+  Esoteric legion of craftsman
+
+COMPANY STANDARD
+	undURnet endgame is to change the global shape of network activity from government-oversight to private 
+	
+[i] http://www.cnn.com/2017/03/08/politics/james-comey-privacy-cybersecurity/
